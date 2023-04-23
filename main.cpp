@@ -6,9 +6,9 @@ int main() {
 
     //black connects top and bottom and goes first,
     // white connects left and right and goes second
-    int board_size = 3;
+    int board_size = 4;
     double exploration_constant = 2.0; // Adjust this value as needed
-    std::chrono::milliseconds move_time_limit(300); // Adjust this value as needed
+    std::chrono::milliseconds move_time_limit(1000); // Adjust this value as needed
 
     // Let user choose their player color
     char human_player;

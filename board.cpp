@@ -77,23 +77,49 @@ bool Board::is_within_bounds(int x, int y) const {
     return x >= 0 && x < board_size&& y >= 0 && y < board_size;
 }
 
-int Board::dfs(int x, int y, char player, std::vector<std::vector<bool>>& visited) const {
+int Board::get_board_size() const {
+    return board_size;
+}
+
+bool Board::dfs(int x, int y, char player, std::vector<std::vector<bool>>& visited, bool& left_reached, bool& right_reached, bool& top_reached, bool& bottom_reached) const {
     static const std::vector<int> dx = { -1, 0, 1, 1, 0, -1 };
     static const std::vector<int> dy = { -1, -1, 0, 1, 1, 0 };
 
+    if (player == 'H') {
+        if (x == 0) {
+            left_reached = true;
+        }
+        if (x == board_size - 1) {
+            right_reached = true;
+        }
+    }
+    else {
+        if (y == 0) {
+            top_reached = true;
+        }
+        if (y == board_size - 1) {
+            bottom_reached = true;
+        }
+    }
+
+    if (left_reached && right_reached || top_reached && bottom_reached) {
+        return true;
+    }
+
     visited[x][y] = true;
-    int count = 1;
 
     for (int i = 0; i < 6; ++i) {
         int nx = x + dx[i];
         int ny = y + dy[i];
 
         if (is_within_bounds(nx, ny) && !visited[nx][ny] && board[nx][ny] == player) {
-            count += dfs(nx, ny, player, visited);
+            if (dfs(nx, ny, player, visited, left_reached, right_reached, top_reached, bottom_reached)) {
+                return true;
+            }
         }
     }
 
-    return count;
+    return false;
 }
 
 char Board::check_winner() const {
@@ -101,20 +127,26 @@ char Board::check_winner() const {
     for (char player : players) {
         std::vector<std::vector<bool>> visited(board_size, std::vector<bool>(board_size, false));
         if (player == 'H') {
-            for (int x = 0; x < board_size; ++x) {
-                if (board[x][0] == 'H' && !visited[x][0]) {
-                    int connected_cells = dfs(x, 0, 'H', visited);
-                    if (connected_cells >= board_size) {
+            for (int y = 0; y < board_size; ++y) {
+                if (board[0][y] == 'H' && !visited[0][y]) { // Check the top row
+                    bool left_reached = false;
+                    bool right_reached = false;
+                    bool top_reached = false;
+                    bool bottom_reached = false;
+                    if (dfs(0, y, 'H', visited, left_reached, right_reached, top_reached, bottom_reached)) {
                         return 'H';
                     }
                 }
             }
         }
         else {
-            for (int y = 0; y < board_size; ++y) {
-                if (board[0][y] == 'V' && !visited[0][y]) {
-                    int connected_cells = dfs(0, y, 'V', visited);
-                    if (connected_cells >= board_size) {
+            for (int x = 0; x < board_size; ++x) {
+                if (board[x][0] == 'V' && !visited[x][0]) { // Check the left column
+                    bool left_reached = false;
+                    bool right_reached = false;
+                    bool top_reached = false;
+                    bool bottom_reached = false;
+                    if (dfs(x, 0, 'V', visited, left_reached, right_reached, top_reached, bottom_reached)) {
                         return 'V';
                     }
                 }
@@ -126,6 +158,5 @@ char Board::check_winner() const {
 }
 
 
-int Board::get_board_size() const {
-    return board_size;
-}
+
+
