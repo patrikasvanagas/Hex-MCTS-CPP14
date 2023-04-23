@@ -20,7 +20,7 @@ private:
     std::vector<std::vector<char>> board;
 
     bool is_within_bounds(int x, int y) const;
-    void dfs(int x, int y, char player, std::vector<std::vector<bool>>& visited) const;
+    int dfs(int x, int y, char player, std::vector<std::vector<bool>>& visited) const;
 };
 
 #endif
