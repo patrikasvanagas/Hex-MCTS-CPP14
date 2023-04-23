@@ -1,6 +1,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <iostream>
+#include <cctype>
 #include <vector>
 #include <stdexcept>
 

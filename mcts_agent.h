@@ -3,15 +3,17 @@
 
 #include <vector>
 #include <memory>
+#include <chrono>
 #include "board.h"
 
 class MCTSAgent {
 public:
-    MCTSAgent(int simulations);
+    MCTSAgent(double exploration_constant, std::chrono::milliseconds move_time_limit);
     std::pair<int, int> choose_move(const Board& board, char player);
 
 private:
-    int num_simulations;
+    double exploration_constant;
+    std::chrono::milliseconds move_time_limit;
     struct Node;
 
     std::shared_ptr<Node> root;
@@ -27,9 +29,9 @@ private:
         Node(char player, std::pair<int, int> move, std::shared_ptr<Node> parent = nullptr);
     };
 
-    std::shared_ptr<Node> select(const std::shared_ptr<Node>& node, Board board);
-    void expand(const std::shared_ptr<Node>& node, const Board& board);
-    void simulate(const std::shared_ptr<Node>& node, Board board);
+    std::shared_ptr<Node> select_node(const std::shared_ptr<Node>& node, const Board& board);
+    std::shared_ptr<Node> expand_node(const std::shared_ptr<Node>& node, Board& board);
+    void simulate_random_playout(Board& board, char current_player);
     void backpropagate(const std::shared_ptr<Node>& node, char winner);
 };
 
