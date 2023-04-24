@@ -8,20 +8,19 @@ Board::Board(int size) : board_size(size), board(size, std::vector<char>(size, '
 
 //similar to the neurobenzene implementation
 void Board::display_board() const {
-    int i, j, k;
-    for (i = 0; i < board_size; i++) {
+    for (int i = 0; i < board_size; i++) {
         char c = 'a' + i;
         std::cout << ' ' << c << ' ';
     }
     std::cout << std::endl;
-    for (i = 0; i <= board_size; i++) {
+    for (int i = 0; i <= board_size; i++) {
         if (i >= 1)
             std::cout << ' ';
-        for (k = 0; k < i - 1; k++)
+        for (int k = 0; k < i - 1; k++)
             std::cout << ' ';
         if (i == board_size) {
             std::cout << ' ' << ' ';
-            for (j = 0; j < board_size; j++) {
+            for (int j = 0; j < board_size; j++) {
                 char c = 'a' + j;
                 std::cout << c << ' ' << ' ';
             }
@@ -29,7 +28,7 @@ void Board::display_board() const {
             continue;
         }
         std::cout << (i + 1) << "\\";
-        for (j = 0; j < board_size; j++) {
+        for (int j = 0; j < board_size; j++) {
             if (j <= board_size - 2) {
                 char c = board[i][j];
                 if (c >= 'a' && c <= 'z') c = toupper(c);
@@ -85,7 +84,7 @@ bool Board::dfs(int x, int y, char player, std::vector<std::vector<bool>>& visit
     static const std::vector<int> dx = { -1, 0, 1, 1, 0, -1 };
     static const std::vector<int> dy = { -1, -1, 0, 1, 1, 0 };
 
-    if (player == 'H') {
+    if (player == 'B') {
         if (x == 0) {
             left_reached = true;
         }
@@ -123,31 +122,31 @@ bool Board::dfs(int x, int y, char player, std::vector<std::vector<bool>>& visit
 }
 
 char Board::check_winner() const {
-    char players[] = { 'H', 'V' };
+    char players[] = { 'B', 'R' };
     for (char player : players) {
         std::vector<std::vector<bool>> visited(board_size, std::vector<bool>(board_size, false));
-        if (player == 'H') {
+        if (player == 'B') {
             for (int y = 0; y < board_size; ++y) {
-                if (board[0][y] == 'H' && !visited[0][y]) { // Check the top row
+                if (board[0][y] == 'B' && !visited[0][y]) { // Check the top row
                     bool left_reached = false;
                     bool right_reached = false;
                     bool top_reached = false;
                     bool bottom_reached = false;
-                    if (dfs(0, y, 'H', visited, left_reached, right_reached, top_reached, bottom_reached)) {
-                        return 'H';
+                    if (dfs(0, y, 'B', visited, left_reached, right_reached, top_reached, bottom_reached)) {
+                        return 'B';
                     }
                 }
             }
         }
         else {
             for (int x = 0; x < board_size; ++x) {
-                if (board[x][0] == 'V' && !visited[x][0]) { // Check the left column
+                if (board[x][0] == 'R' && !visited[x][0]) { // Check the left column
                     bool left_reached = false;
                     bool right_reached = false;
                     bool top_reached = false;
                     bool bottom_reached = false;
-                    if (dfs(x, 0, 'V', visited, left_reached, right_reached, top_reached, bottom_reached)) {
-                        return 'V';
+                    if (dfs(x, 0, 'R', visited, left_reached, right_reached, top_reached, bottom_reached)) {
+                        return 'R';
                     }
                 }
             }
