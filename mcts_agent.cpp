@@ -37,13 +37,13 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
         if (simulated_board.check_winner() == '.') {
             node = expand_node(node, simulated_board);
             if (node) {
-                simulate_random_playout(simulated_board, (player == 'B') ? 'R' : 'B');
+                simulate_random_playout(simulated_board, (player == 'H') ? 'V' : 'H');
             }
         }
         char winner = simulated_board.check_winner();
         backpropagate(node, winner);
     }
-    double max_win_ratio = -std::numeric_limits<double>::infinity();
+    double max_win_ratio = -1.;
     std::shared_ptr<Node> best_child;
     if (root->children.empty()) {
         throw std::runtime_error("No legal moves available.");
@@ -63,7 +63,7 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
 
 std::shared_ptr<MCTSAgent::Node> MCTSAgent::select_node(
     const std::shared_ptr<Node>& node, const Board& board) {
-    double max_score = -std::numeric_limits<double>::infinity();
+    double max_score = std::numeric_limits<double>::lowest();
     std::shared_ptr<Node> best_child;
     for (const auto& child : node->children) {
         double uct_score = static_cast<double>(child->wins) / child->visits +
@@ -85,7 +85,7 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::expand_node(
     if (board.check_winner() != '.') {
         return nullptr;
     }
-    char next_player = (node->player == 'B') ? 'R' : 'B';
+    char next_player = (node->player == 'H') ? 'V' : 'H';
     for (int x = 0; x < board.get_board_size(); ++x) {
         for (int y = 0; y < board.get_board_size(); ++y) {
             if (board.is_valid_move(x, y)) {
@@ -125,7 +125,7 @@ void MCTSAgent::simulate_random_playout(Board& board, char current_player) {
             0, static_cast<int>(valid_moves.size() - 1));
         std::pair<int, int> random_move = valid_moves[dis(gen)];
         board.make_move(random_move.first, random_move.second, current_player);
-        current_player = (current_player == 'B') ? 'R' : 'B';
+        current_player = (current_player == 'H') ? 'V' : 'H';
     }
 }
 

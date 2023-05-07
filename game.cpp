@@ -12,7 +12,7 @@ void Game::switch_player() {
 void Game::make_agent_move() {
 	MCTSAgent agent(exploration_constant, move_time_limit);
 	std::pair<int, int> move = agent.choose_move(board, current_player);
-	std::cout << "Agent move: (" << move.first << ", " << move.second << ")" << std::endl;
+	//std::cout << "Agent move: (" << move.first << ", " << move.second << ")" << std::endl;
 	board.make_move(move.first, move.second, current_player);
 }
 
@@ -29,7 +29,7 @@ void Game::make_human_move() {
 			int y = col_char - 'a';
 			try {
 				board.make_move(x - 1, y, current_player);
-				std::cout << "Human move: (" << (x - 1) << ", " << y << ")" << std::endl;
+				//std::cout << "Human move: (" << (x - 1) << ", " << y << ")" << std::endl;
 				valid_move = true;
 			}
 			catch (const std::invalid_argument&) {

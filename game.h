@@ -21,5 +21,4 @@ private:
     void make_agent_move();
     void make_human_move();
 };
-
 #endif

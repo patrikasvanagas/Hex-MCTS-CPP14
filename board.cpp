@@ -80,28 +80,18 @@ int Board::get_board_size() const {
     return board_size;
 }
 
-bool Board::dfs(int x, int y, char player, std::vector<std::vector<bool>>& visited, bool& left_reached, bool& right_reached, bool& top_reached, bool& bottom_reached) const {
+bool Board::dfs(int x, int y, char player, std::vector<std::vector<bool>>& visited) const {
     static const std::vector<int> dx = { -1, 0, 1, 1, 0, -1 };
     static const std::vector<int> dy = { -1, -1, 0, 1, 1, 0 };
 
-    if (player == 'B') {
-        if (x == 0) {
-            left_reached = true;
-        }
-        if (x == board_size - 1) {
-            right_reached = true;
-        }
-    }
-    else {
-        if (y == 0) {
-            top_reached = true;
-        }
-        if (y == board_size - 1) {
-            bottom_reached = true;
-        }
+    if (!is_within_bounds(x, y) || visited[x][y] || board[x][y] != player) {
+        return false;
     }
 
-    if (left_reached && right_reached || top_reached && bottom_reached) {
+    if (player == 'B' && y == 0) {
+        return true;
+    }
+    if (player == 'R' && x == 0) {
         return true;
     }
 
@@ -111,10 +101,8 @@ bool Board::dfs(int x, int y, char player, std::vector<std::vector<bool>>& visit
         int nx = x + dx[i];
         int ny = y + dy[i];
 
-        if (is_within_bounds(nx, ny) && !visited[nx][ny] && board[nx][ny] == player) {
-            if (dfs(nx, ny, player, visited, left_reached, right_reached, top_reached, bottom_reached)) {
-                return true;
-            }
+        if (dfs(nx, ny, player, visited)) {
+            return true;
         }
     }
 
@@ -126,36 +114,19 @@ char Board::check_winner() const {
     for (char player : players) {
         std::vector<std::vector<bool>> visited(board_size, std::vector<bool>(board_size, false));
         if (player == 'B') {
-            for (int y = 0; y < board_size; ++y) {
-                if (board[0][y] == 'B' && !visited[0][y]) { // Check the top row
-                    bool left_reached = false;
-                    bool right_reached = false;
-                    bool top_reached = false;
-                    bool bottom_reached = false;
-                    if (dfs(0, y, 'B', visited, left_reached, right_reached, top_reached, bottom_reached)) {
-                        return 'B';
-                    }
+            for (int x = 0; x < board_size; ++x) {
+                if (board[x][0] == player && dfs(x, 0, player, visited)) {
+                    return player;
                 }
             }
         }
         else {
-            for (int x = 0; x < board_size; ++x) {
-                if (board[x][0] == 'R' && !visited[x][0]) { // Check the left column
-                    bool left_reached = false;
-                    bool right_reached = false;
-                    bool top_reached = false;
-                    bool bottom_reached = false;
-                    if (dfs(x, 0, 'R', visited, left_reached, right_reached, top_reached, bottom_reached)) {
-                        return 'R';
-                    }
+            for (int y = 0; y < board_size; ++y) {
+                if (board[0][y] == player && dfs(0, y, player, visited)) {
+                    return player;
                 }
             }
         }
     }
-
     return '.';
 }
-
-
-
-
