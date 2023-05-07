@@ -6,6 +6,7 @@
 
 Board::Board(int size) : board_size(size), board(size, std::vector<char>(size, '.')) {}
 
+
 //similar to the neurobenzene implementation
 void Board::display_board() const {
     for (int i = 0; i < board_size; i++) {
@@ -58,7 +59,6 @@ void Board::display_board() const {
 //}
 
 
-
 bool Board::is_valid_move(int x, int y) const {
     return (x >= 0 && x < board_size) && (y >= 0 && y < board_size) && (board[x][y] == '.');
 }
@@ -76,57 +76,68 @@ bool Board::is_within_bounds(int x, int y) const {
     return x >= 0 && x < board_size&& y >= 0 && y < board_size;
 }
 
+
+
 int Board::get_board_size() const {
     return board_size;
 }
 
-bool Board::dfs(int x, int y, char player, std::vector<std::vector<bool>>& visited) const {
-    static const std::vector<int> dx = { -1, 0, 1, 1, 0, -1 };
-    static const std::vector<int> dy = { -1, -1, 0, 1, 1, 0 };
+bool Board::dfs(int x, int y, int target_x, int target_y, char player) {
+    if (x == target_x && y == target_y) return true;
 
-    if (!is_within_bounds(x, y) || visited[x][y] || board[x][y] != player) {
-        return false;
-    }
-
-    if (player == 'B' && y == 0) {
-        return true;
-    }
-    if (player == 'R' && x == 0) {
-        return true;
-    }
-
-    visited[x][y] = true;
+    board[x][y] = '.';
 
     for (int i = 0; i < 6; ++i) {
         int nx = x + dx[i];
         int ny = y + dy[i];
 
-        if (dfs(nx, ny, player, visited)) {
+        if (is_valid(nx, ny) && board[nx][ny] == player && dfs(nx, ny, target_x, target_y, player)) {
+            board[x][y] = player;
             return true;
         }
     }
 
+    board[x][y] = player;
     return false;
 }
 
-char Board::check_winner() const {
-    char players[] = { 'B', 'R' };
-    for (char player : players) {
-        std::vector<std::vector<bool>> visited(board_size, std::vector<bool>(board_size, false));
-        if (player == 'B') {
-            for (int x = 0; x < board_size; ++x) {
-                if (board[x][0] == player && dfs(x, 0, player, visited)) {
-                    return player;
+bool Board::is_connected(int x1, int y1, int x2, int y2) {
+    for (int i = 0; i < 6; ++i) {
+        int nx = x1 + dx[i];
+        int ny = y1 + dy[i];
+
+        if (is_valid(nx, ny) && nx == x2 && ny == y2) {
+            return true;
+        }
+    }
+    return false;
+}
+
+char Board::check_winner() {
+    // Check for player B (top to bottom)
+    for (int i = 0; i < board_size; ++i) {
+        if (board[0][i] == 'B') {
+            for (int j = 0; j < board_size; ++j) {
+                if (board[board_size - 1][j] == 'B' && dfs(0, i, board_size - 1, j, 'B')) {
+                    return 'B';
                 }
             }
         }
-        else {
-            for (int y = 0; y < board_size; ++y) {
-                if (board[0][y] == player && dfs(0, y, player, visited)) {
-                    return player;
+    }
+
+    // Check for player R (left to right)
+    for (int i = 0; i < board_size; ++i) {
+        if (board[i][0] == 'R') {
+            for (int j = 0; j < board_size; ++j) {
+                if (board[j][board_size - 1] == 'R' && dfs(i, 0, j, board_size - 1, 'R')) {
+                    return 'R';
                 }
             }
         }
     }
     return '.';
+}
+
+bool Board::is_valid(int x, int y) {
+    return x >= 0 && x < board_size && y >= 0 && y < board_size;
 }

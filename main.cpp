@@ -1,6 +1,6 @@
 #include <iostream>
 #include <chrono>
-#include "game.h"
+//#include "game.h"
 #include "board.h"
 
 
@@ -46,13 +46,21 @@ void test_winning_condition() {
     board5.make_move(1, 1, 'B');
     board5.make_move(2, 0, 'B');
     print_board_and_winner(board5);
-}
 
+    Board board6(5);
+    board6.make_move(3, 0, 'R');
+    board6.make_move(3, 1, 'R');
+    board6.make_move(2, 2, 'R');
+    board6.make_move(1, 2, 'R');
+    board6.make_move(0, 3, 'R');
+    board6.make_move(0, 4, 'R');
+    print_board_and_winner(board6);
+}
 
 
 int main() {
 
-
+    //wow!
     test_winning_condition();
 
 
