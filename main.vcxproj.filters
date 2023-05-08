@@ -41,9 +41,6 @@
     <ClInclude Include="hex_game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game_base.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="player.h">
       <Filter>Header Files</Filter>
     </ClInclude>

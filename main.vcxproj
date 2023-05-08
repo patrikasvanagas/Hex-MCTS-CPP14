@@ -136,7 +136,6 @@
   <ItemGroup>
     <ClInclude Include="hex_board.h" />
     <ClInclude Include="hex_game.h" />
-    <ClInclude Include="game_base.h" />
     <ClInclude Include="mcts_agent.h" />
     <ClInclude Include="player.h" />
   </ItemGroup>

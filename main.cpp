@@ -60,9 +60,10 @@ void test_winning_condition() {
 
 int main() {
 
-    HumanPlayer human;
-    MCTSPlayer mcts_agent_2(1.41, std::chrono::milliseconds(500));
-    Game game(5, &mcts_agent_2, &mcts_agent_2);
+    //HumanPlayer human;
+    MCTSPlayer mcts_agent_1(1.41, std::chrono::milliseconds(10));
+    MCTSPlayer mcts_agent_2(1.41, std::chrono::milliseconds(10));
+    Game game(5, &mcts_agent_1, &mcts_agent_2);
     game.play();
 
     //test_winning_condition();

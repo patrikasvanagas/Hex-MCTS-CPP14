@@ -45,6 +45,12 @@ void Board::display_board() const {
     }
 }
 
+std::ostream& operator<<(std::ostream& os, const Board& board) {
+    // Use the display_board function to print the board state
+    board.display_board();
+    return os;
+}
+
 bool Board::is_valid_move(int x, int y) const {
     return (x >= 0 && x < board_size) && (y >= 0 && y < board_size) && (board[x][y] == '.');
 }
@@ -62,7 +68,6 @@ bool Board::is_within_bounds(int x, int y) const {
     return x >= 0 && x < board_size&& y >= 0 && y < board_size;
 }
 
-
 int Board::get_board_size() const {
     return board_size;
 }
@@ -76,7 +81,7 @@ bool Board::dfs(int x, int y, int target_x, int target_y, char player, std::vect
         int nx = x + dx[i];
         int ny = y + dy[i];
 
-        if (is_valid(nx, ny) && temp_board[nx][ny] == player && dfs(nx, ny, target_x, target_y, player, temp_board)) {
+        if (is_within_bounds(nx, ny) && temp_board[nx][ny] == player && dfs(nx, ny, target_x, target_y, player, temp_board)) {
             temp_board[x][y] = player;
             return true;
         }
@@ -91,7 +96,7 @@ bool Board::is_connected(int x1, int y1, int x2, int y2) {
         int nx = x1 + dx[i];
         int ny = y1 + dy[i];
 
-        if (is_valid(nx, ny) && nx == x2 && ny == y2) {
+        if (is_within_bounds(nx, ny) && nx == x2 && ny == y2) {
             return true;
         }
     }
@@ -125,6 +130,4 @@ char Board::check_winner() const{
     return '.';
 }
 
-bool Board::is_valid(int x, int y) const{
-    return x >= 0 && x < board_size && y >= 0 && y < board_size;
-}
+

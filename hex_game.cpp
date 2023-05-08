@@ -15,7 +15,7 @@ void Game::play() {
     char winner = '.';
     while (winner == '.') {
         board.display_board(); 
-        char current_player = current_player_idx == 0 ? 'B' : 'R';// gal atvirksciai?
+        char current_player = current_player_idx == 0 ? 'B' : 'R';
         std::pair<int, int> move = players[current_player_idx]->choose_move(board, current_player);
         // Output the chosen move
         int row = move.first + 1;
@@ -26,7 +26,7 @@ void Game::play() {
         switch_player();
     }
     board.display_board();
-    char winning_player = (current_player_idx == 0) ? 'R' : 'B'; // tada ir cia
+    char winning_player = (current_player_idx == 0) ? 'R' : 'B';
     std::cout << "Player " << winning_player << " wins!" << std::endl;
 }
 

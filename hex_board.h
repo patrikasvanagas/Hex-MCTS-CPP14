@@ -6,6 +6,8 @@
 #include <vector>
 #include <stdexcept>
 #include <array>
+#include <algorithm>
+#include "iterator"
 
 class Board {
 public:
@@ -15,6 +17,7 @@ public:
     void make_move(int x, int y, char player);
     char check_winner() const;
     int get_board_size() const;
+    friend std::ostream& operator<<(std::ostream& os, const Board& board);
 
 private:
     int board_size;
@@ -25,7 +28,6 @@ private:
     bool is_within_bounds(int x, int y) const;
     bool dfs(int x, int y, int target_x, int target_y, char player, std::vector<std::vector<char>>& temp_board) const;
     bool is_connected(int x1, int y1, int x2, int y2);
-    bool is_valid(int x, int y) const;
 };
 
 #endif
