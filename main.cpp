@@ -1,6 +1,6 @@
 #include <iostream>
 #include <chrono>
-#include "game.h"
+#include "hex_game.h"
 #include "board.h"
 #include "mcts_agent.h"
 #include "board.h"
@@ -61,21 +61,12 @@ void test_winning_condition() {
 
 int main() {
 
-    test_winning_condition();
+    HumanPlayer human;
+    MCTSPlayer mcts_agent_2(1.41, std::chrono::milliseconds(500));
+    Game game(5, &mcts_agent_2, &mcts_agent_2);
+    game.play();
 
-	//int board_size = 3;
-	//double exploration_constant = std::sqrt(2.0); // Adjust this value as needed
-	//std::chrono::milliseconds move_time_limit(5000); // Adjust this value as needed
-
-	//char human_player = 'R';
-	////std::cout << "Choose your player color (B/R): ";
-	////std::cin >> human_player;
-	//while (human_player != 'B' && human_player != 'R') {
-	//	std::cout << "Invalid input! Choose your player color (B/R): ";
-	//	std::cin >> human_player;
-	//}
-	//Game game(board_size, exploration_constant, move_time_limit, human_player);
-	//game.play_game();
+    //test_winning_condition();
 
 	return 0;
 }

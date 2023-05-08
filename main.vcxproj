@@ -128,14 +128,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="board.cpp" />
-    <ClCompile Include="game.cpp" />
+    <ClCompile Include="hex_game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mcts_agent.cpp" />
+    <ClCompile Include="player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="board.h" />
-    <ClInclude Include="game.h" />
+    <ClInclude Include="hex_game.h" />
+    <ClInclude Include="game_base.h" />
     <ClInclude Include="mcts_agent.h" />
+    <ClInclude Include="player.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
