@@ -71,8 +71,8 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::select_node(
         double uct_score = static_cast<double>(child->wins) / child->visits +
             exploration_constant *
             std::sqrt(std::log(node->visits) / child->visits);
-        //std::cout << "select_node debug: Child move: " << child->move.first << "," << child->move.second
-        //    << " UCT score: " << uct_score << std::endl;
+        std::cout << "select_node debug: Child move: " << child->move.first << "," << child->move.second
+            << " UCT score: " << uct_score << std::endl;
         if (uct_score > max_score) {
             max_score = uct_score;
             best_child = child;
@@ -96,7 +96,7 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::expand_node(
                 std::shared_ptr<Node> new_child =
                     std::make_shared<Node>(next_player, std::make_pair(x, y), node);
                 node->children.push_back(new_child);
-                //std::cout << "expand_node debug: Expanded child: " << x << "," << y << std::endl;
+                std::cout << "expand_node debug: Expanded child: " << x << "," << y << std::endl;
             }
         }
     }
@@ -131,7 +131,6 @@ void MCTSAgent::simulate_random_playout(Board& board, char current_player) {
         std::pair<int, int> random_move = valid_moves[dis(gen)];
         board.make_move(random_move.first, random_move.second, current_player);
 
-        // Debug: print board state, current player, and random move
         //std::cout << "debug simulate_random_playout: Board state:\n" << board << std::endl;
         //std::cout << "debug simulate_random_playout: Current player: " << current_player << std::endl;
         //std::cout << "debug simulate_random_playout: Random move: " << random_move.first << "," << random_move.second << std::endl;

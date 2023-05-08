@@ -2,12 +2,44 @@
 #include <cctype>
 #include <vector>
 #include <stdexcept>
+#include <algorithm>
+#include "iterator"
 #include "hex_board.h"
 
 Board::Board(int size) : board_size(size), board(size, std::vector<char>(size, '.')) {}
 
+//
+//void Board::display_board() const {
+//    std::cout << "\n";
+//    for (size_t i = 0; i < board_size; ++i) {
+//        std::cout << std::string(2 * i, ' ');
+//        for (size_t j = 0; j < board_size; ++j) {
+//            std::cout << board[i][j];
+//            if (j < board_size - 1) {
+//                std::cout << " - ";
+//            }
+//        }
+//        std::cout << " " << i + 1;
+//        std::cout << "\n";
+//
+//        if (i < board_size - 1) {
+//            std::cout << std::string(2 * i + 1, ' ');
+//            for (size_t j = 0; j < board_size - 1; ++j) {
+//                std::cout << "\\ / ";
+//            }
+//            std::cout << "\\";
+//            std::cout << "\n";
+//        }
+//    }
+//    // print the bottom coordinate labels
+//    std::cout << std::string(2 * (board_size - 1) - 1, ' ');
+//    for (size_t j = 0; j < board_size; ++j) {
+//        std::cout << "  " << static_cast<char>('a' + j) << " ";
+//    }
+//    std::cout << "\n\n";
+//}
 
-//similar to the neurobenzene implementation
+//neurobenzene
 void Board::display_board() const {
     for (int i = 0; i < board_size; i++) {
         char c = 'a' + i;

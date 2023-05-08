@@ -4,6 +4,18 @@
 #include "hex_board.h"
 #include "mcts_agent.h"
 
+int main() {
+
+    //HumanPlayer human;
+    //MCTSPlayer mcts_agent_1(1.41, std::chrono::milliseconds(10));
+    //MCTSPlayer mcts_agent_2(1.41, std::chrono::milliseconds(10));
+    //Game game(3, &mcts_agent_1, &mcts_agent_2);
+    //game.play();
+
+	return 0;
+}
+
+
 void print_board_and_winner(Board& board) {
     board.display_board();
     char winner = board.check_winner();
@@ -56,20 +68,5 @@ void test_winning_condition() {
     board6.make_move(1, 4, 'R');
     print_board_and_winner(board6);
 }
-
-
-int main() {
-
-    //HumanPlayer human;
-    MCTSPlayer mcts_agent_1(1.41, std::chrono::milliseconds(10));
-    MCTSPlayer mcts_agent_2(1.41, std::chrono::milliseconds(10));
-    Game game(5, &mcts_agent_1, &mcts_agent_2);
-    game.play();
-
-    //test_winning_condition();
-
-	return 0;
-}
-
 
 
