@@ -3,7 +3,7 @@
 
 #include <utility>
 #include <chrono>
-#include "board.h"
+#include "hex_board.h"
 
 class Player {
 public:

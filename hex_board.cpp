@@ -2,7 +2,7 @@
 #include <cctype>
 #include <vector>
 #include <stdexcept>
-#include "board.h"
+#include "hex_board.h"
 
 Board::Board(int size) : board_size(size), board(size, std::vector<char>(size, '.')) {}
 

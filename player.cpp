@@ -25,6 +25,7 @@ std::pair<int, int> HumanPlayer::choose_move(const Board& board, char player) {
             std::cout << "Invalid column! Try again." << std::endl;
         }
     }
+    return std::make_pair(-1, -1);
 }
 
 MCTSPlayer::MCTSPlayer(double exploration_constant, std::chrono::milliseconds move_time_limit)

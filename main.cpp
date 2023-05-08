@@ -1,9 +1,8 @@
 #include <iostream>
 #include <chrono>
 #include "hex_game.h"
-#include "board.h"
+#include "hex_board.h"
 #include "mcts_agent.h"
-#include "board.h"
 
 void print_board_and_winner(Board& board) {
     board.display_board();

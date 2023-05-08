@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include <chrono>
-#include "board.h"
+#include "hex_board.h"
 
 class MCTSAgent {
 public:

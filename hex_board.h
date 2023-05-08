@@ -1,5 +1,5 @@
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef HEX_BOARD_H
+#define HEX_BOARD_H
 
 #include <iostream>
 #include <cctype>

@@ -1,7 +1,7 @@
 #ifndef HEX_GAME_H
 #define HEX_GAME_H
 
-#include "board.h"
+#include "hex_board.h"
 #include "player.h"
 
 class Game {
