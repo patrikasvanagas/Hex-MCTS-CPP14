@@ -1,8 +1,9 @@
 #include <iostream>
 #include <chrono>
-//#include "game.h"
+#include "game.h"
 #include "board.h"
-
+#include "mcts_agent.h"
+#include "board.h"
 
 void print_board_and_winner(Board& board) {
     board.display_board();
@@ -52,23 +53,21 @@ void test_winning_condition() {
     board6.make_move(3, 1, 'R');
     board6.make_move(2, 2, 'R');
     board6.make_move(1, 2, 'R');
-    board6.make_move(0, 3, 'R');
-    board6.make_move(0, 4, 'R');
+    board6.make_move(1, 3, 'R');
+    board6.make_move(1, 4, 'R');
     print_board_and_winner(board6);
 }
 
 
 int main() {
 
-    //wow!
     test_winning_condition();
-
 
 	//int board_size = 3;
 	//double exploration_constant = std::sqrt(2.0); // Adjust this value as needed
-	//std::chrono::milliseconds move_time_limit(1000); // Adjust this value as needed
+	//std::chrono::milliseconds move_time_limit(5000); // Adjust this value as needed
 
-	//char human_player = 'B';
+	//char human_player = 'R';
 	////std::cout << "Choose your player color (B/R): ";
 	////std::cin >> human_player;
 	//while (human_player != 'B' && human_player != 'R') {
@@ -80,4 +79,6 @@ int main() {
 
 	return 0;
 }
+
+
 
