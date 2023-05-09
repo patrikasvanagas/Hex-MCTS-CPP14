@@ -7,10 +7,10 @@
 int main() {
 
     //HumanPlayer human;
-    //MCTSPlayer mcts_agent_1(1.41, std::chrono::milliseconds(10));
-    //MCTSPlayer mcts_agent_2(1.41, std::chrono::milliseconds(10));
-    //Game game(3, &mcts_agent_1, &mcts_agent_2);
-    //game.play();
+    MCTSPlayer mcts_agent_1(1.41, std::chrono::milliseconds(100), true);
+    MCTSPlayer mcts_agent_2(1.41, std::chrono::milliseconds(100), false);
+    Game game(3, &mcts_agent_1, &mcts_agent_2);
+    game.play();
 
 	return 0;
 }
@@ -68,5 +68,3 @@ void test_winning_condition() {
     board6.make_move(1, 4, 'R');
     print_board_and_winner(board6);
 }
-
-

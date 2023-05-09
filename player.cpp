@@ -28,10 +28,10 @@ std::pair<int, int> HumanPlayer::choose_move(const Board& board, char player) {
     return std::make_pair(-1, -1);
 }
 
-MCTSPlayer::MCTSPlayer(double exploration_constant, std::chrono::milliseconds move_time_limit)
-    : exploration_constant(exploration_constant), move_time_limit(move_time_limit) {}
+MCTSPlayer::MCTSPlayer(double exploration_constant, std::chrono::milliseconds move_time_limit, bool verbose)
+    : exploration_constant(exploration_constant), move_time_limit(move_time_limit), verbose(verbose) {}
 
 std::pair<int, int> MCTSPlayer::choose_move(const Board& board, char player) {
-    MCTSAgent agent(exploration_constant, move_time_limit);
+    MCTSAgent agent(exploration_constant, move_time_limit, verbose);
     return agent.choose_move(board, player);
 }

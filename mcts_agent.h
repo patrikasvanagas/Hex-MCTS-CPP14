@@ -8,12 +8,13 @@
 
 class MCTSAgent {
 public:
-    MCTSAgent(double exploration_constant, std::chrono::milliseconds move_time_limit);
+    MCTSAgent(double exploration_constant, std::chrono::milliseconds move_time_limit, bool verbose = false);
     std::pair<int, int> choose_move(const Board& board, char player);
 
 private:
     double exploration_constant;
     std::chrono::milliseconds move_time_limit;
+    bool verbose = false;
     struct Node;
 
     std::shared_ptr<Node> root;

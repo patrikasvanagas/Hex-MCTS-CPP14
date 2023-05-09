@@ -6,9 +6,9 @@
 #include "mcts_agent.h"
 
 MCTSAgent::MCTSAgent(double exploration_constant,
-    std::chrono::milliseconds move_time_limit)
+    std::chrono::milliseconds move_time_limit, bool verbose)
     : exploration_constant(exploration_constant),
-    move_time_limit(move_time_limit) {}
+    move_time_limit(move_time_limit), verbose(verbose) {}
 
 MCTSAgent::Node::Node(char player, std::pair<int, int> move,
     std::shared_ptr<Node> parent)
@@ -50,8 +50,10 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
     }
     for (const auto& child : root->children) {
         double win_ratio = static_cast<double>(child->wins) / child->visits;
-        //std::cout << "choose_move debug: Child move: " << child->move.first << "," << child->move.second
-        //    << " Win ratio: " << win_ratio << std::endl;
+        if (verbose) {
+            std::cout << "choose_move verbose: Child move: " << child->move.first << "," << child->move.second
+                << " Win ratio: " << win_ratio << std::endl;
+        }
         if (win_ratio > max_win_ratio) {
             max_win_ratio = win_ratio;
             best_child = child;
@@ -71,8 +73,10 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::select_node(
         double uct_score = static_cast<double>(child->wins) / child->visits +
             exploration_constant *
             std::sqrt(std::log(node->visits) / child->visits);
-        std::cout << "select_node debug: Child move: " << child->move.first << "," << child->move.second
-            << " UCT score: " << uct_score << std::endl;
+        if (verbose) {
+            std::cout << "select_node verbose: Child move: " << child->move.first << "," << child->move.second
+                << " UCT score: " << uct_score << std::endl;
+        }
         if (uct_score > max_score) {
             max_score = uct_score;
             best_child = child;
@@ -96,7 +100,9 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::expand_node(
                 std::shared_ptr<Node> new_child =
                     std::make_shared<Node>(next_player, std::make_pair(x, y), node);
                 node->children.push_back(new_child);
-                std::cout << "expand_node debug: Expanded child: " << x << "," << y << std::endl;
+                if (verbose) {
+                    std::cout << "expand_node verbose: Expanded child: " << x << "," << y << std::endl;
+                }
             }
         }
     }
@@ -129,12 +135,12 @@ void MCTSAgent::simulate_random_playout(Board& board, char current_player) {
         std::uniform_int_distribution<> dis(
             0, static_cast<int>(valid_moves.size() - 1));
         std::pair<int, int> random_move = valid_moves[dis(gen)];
+        if (verbose) {
+        std::cout << "verbose simulate_random_playout: Board state:\n" << board << std::endl;
+        std::cout << "verbose simulate_random_playout: Current player: " << current_player << std::endl;
+        std::cout << "verbose simulate_random_playout: Random move: " << random_move.first << "," << random_move.second << std::endl;
+        }
         board.make_move(random_move.first, random_move.second, current_player);
-
-        //std::cout << "debug simulate_random_playout: Board state:\n" << board << std::endl;
-        //std::cout << "debug simulate_random_playout: Current player: " << current_player << std::endl;
-        //std::cout << "debug simulate_random_playout: Random move: " << random_move.first << "," << random_move.second << std::endl;
-
         current_player = (current_player == 'B') ? 'R' : 'B';
     }
 }
@@ -146,8 +152,10 @@ void MCTSAgent::backpropagate(const std::shared_ptr<Node>& node, char winner) {
         if (current_node->player == winner) {
             current_node->wins++;
         }
-        //std::cout << "backpropagate debug: Backpropagate move: " << current_node->move.first << "," << current_node->move.second
-        //    << " Wins: " << current_node->wins << " Visits: " << current_node->visits << std::endl;
+        if (verbose) {
+            std::cout << "backpropagate verbose: Backpropagate move: " << current_node->move.first << "," << current_node->move.second
+                << " Wins: " << current_node->wins << " Visits: " << current_node->visits << std::endl;
+        }
         current_node = current_node->parent;
     }
 }
