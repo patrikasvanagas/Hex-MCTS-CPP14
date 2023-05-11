@@ -26,6 +26,9 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
     root = std::make_shared<Node>(player, std::make_pair(-1, -1), nullptr);
     Board root_board(board);
     expand_node(root, root_board);
+
+    
+
     auto start_time = std::chrono::high_resolution_clock::now();
     auto end_time = start_time + move_time_limit;
     while (std::chrono::high_resolution_clock::now() < end_time) {
@@ -66,6 +69,7 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
     return best_child->move;
 }
 
+
 std::shared_ptr<MCTSAgent::Node> MCTSAgent::select_node(
     const std::shared_ptr<Node>& node, const Board& board) {
     double max_score = std::numeric_limits<double>::lowest();
@@ -88,16 +92,17 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::select_node(
 
 std::shared_ptr<MCTSAgent::Node> MCTSAgent::expand_node(
     const std::shared_ptr<Node>& node, Board& board) {
+    Board expanded_board(board);
     if (node->move.first != -1 && node->move.second != -1) {
-        board.make_move(node->move.first, node->move.second, node->player);
+        expanded_board.make_move(node->move.first, node->move.second, node->player);
     }
-    if (board.check_winner() != '.') {
+    if (expanded_board.check_winner() != '.') {
         return nullptr;
     }
     char next_player = (node->player == 'B') ? 'R' : 'B';
-    for (int x = 0; x < board.get_board_size(); ++x) {
-        for (int y = 0; y < board.get_board_size(); ++y) {
-            if (board.is_valid_move(x, y)) {
+    for (int x = 0; x < expanded_board.get_board_size(); ++x) {
+        for (int y = 0; y < expanded_board.get_board_size(); ++y) {
+            if (expanded_board.is_valid_move(x, y)) {
                 std::shared_ptr<Node> new_child =
                     std::make_shared<Node>(next_player, std::make_pair(x, y), node);
                 node->children.push_back(new_child);
@@ -115,12 +120,14 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::expand_node(
     return node->children[dis(gen)];
 }
 
+
 void MCTSAgent::simulate_random_playout(Board& board, char current_player) {
-    while (board.check_winner() == '.') {
+    Board simulation_board(board);  // Create a new board copy for the simulation
+    while (simulation_board.check_winner() == '.') {
         std::vector<std::pair<int, int>> valid_moves;
-        for (int x = 0; x < board.get_board_size(); ++x) {
-            for (int y = 0; y < board.get_board_size(); ++y) {
-                if (board.is_valid_move(x, y)) {
+        for (int x = 0; x < simulation_board.get_board_size(); ++x) {
+            for (int y = 0; y < simulation_board.get_board_size(); ++y) {
+                if (simulation_board.is_valid_move(x, y)) {
                     valid_moves.push_back(std::make_pair(x, y));
                 }
             }
@@ -132,11 +139,14 @@ void MCTSAgent::simulate_random_playout(Board& board, char current_player) {
             0, static_cast<int>(valid_moves.size() - 1));
         std::pair<int, int> random_move = valid_moves[dis(gen)];
         if (verbose) {
-        std::cout << "verbose simulate_random_playout: Board state:\n" << board << std::endl;
+        std::cout << "verbose simulate_random_playout: Board state:\n" << simulation_board << std::endl;
         std::cout << "verbose simulate_random_playout: Current player: " << current_player << std::endl;
         std::cout << "verbose simulate_random_playout: Random move: " << random_move.first << "," << random_move.second << std::endl;
         }
-        board.make_move(random_move.first, random_move.second, current_player);
+        simulation_board.make_move(random_move.first, random_move.second, current_player);
+        if (simulation_board.check_winner() != '.') {
+            break;  // If the game has ended, break the loop.
+        }
         current_player = (current_player == 'B') ? 'R' : 'B';
     }
 }
