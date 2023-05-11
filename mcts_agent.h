@@ -12,17 +12,16 @@ public:
     MCTSAgent(double exploration_constant, std::chrono::milliseconds move_time_limit, bool verbose = false);
     std::pair<int, int> choose_move(const Board& board, char player);
 
+
+
 private:
     double exploration_constant;
     std::chrono::milliseconds move_time_limit;
     bool verbose = false;
-    struct Node;
-
-    std::shared_ptr<Node> root;
-
     std::random_device rd;
     std::mt19937 gen;
-
+    struct Node;
+    std::shared_ptr<Node> root;
     struct Node {
         int wins;
         int visits;
@@ -33,7 +32,6 @@ private:
 
         Node(char player, std::pair<int, int> move, std::shared_ptr<Node> parent = nullptr);
     };
-
     std::shared_ptr<Node> select_node(const std::shared_ptr<Node>& node, const Board& board);
     std::shared_ptr<Node> expand_node(const std::shared_ptr<Node>& node, Board& board);
     void simulate_random_playout(Board& board, char current_player);
