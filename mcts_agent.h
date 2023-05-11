@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <chrono>
+#include <random>
 #include "hex_board.h"
 
 class MCTSAgent {
@@ -18,6 +19,9 @@ private:
     struct Node;
 
     std::shared_ptr<Node> root;
+
+    std::random_device rd;
+    std::mt19937 gen;
 
     struct Node {
         int wins;

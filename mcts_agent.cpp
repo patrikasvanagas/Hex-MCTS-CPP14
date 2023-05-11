@@ -8,7 +8,7 @@
 MCTSAgent::MCTSAgent(double exploration_constant,
     std::chrono::milliseconds move_time_limit, bool verbose)
     : exploration_constant(exploration_constant),
-    move_time_limit(move_time_limit), verbose(verbose) {}
+    move_time_limit(move_time_limit), verbose(verbose), gen(rd()) {}
 
 MCTSAgent::Node::Node(char player, std::pair<int, int> move,
     std::shared_ptr<Node> parent)
@@ -37,7 +37,8 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
         if (simulated_board.check_winner() == '.') {
             node = expand_node(node, simulated_board);
             if (node) {
-                simulate_random_playout(simulated_board, (player == 'B') ? 'R' : 'B');
+                char opponent = (node->player == 'B') ? 'R' : 'B';
+                simulate_random_playout(simulated_board, opponent);
             }
         }
         char winner = simulated_board.check_winner();
@@ -109,17 +110,12 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::expand_node(
     if (node->children.empty()) {
         return nullptr;
     }
-
-    std::random_device rd;
-    std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(
         0, static_cast<int>(node->children.size() - 1));
     return node->children[dis(gen)];
 }
 
 void MCTSAgent::simulate_random_playout(Board& board, char current_player) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
     while (board.check_winner() == '.') {
         std::vector<std::pair<int, int>> valid_moves;
         for (int x = 0; x < board.get_board_size(); ++x) {

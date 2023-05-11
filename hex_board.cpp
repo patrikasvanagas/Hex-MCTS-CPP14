@@ -8,74 +8,74 @@
 
 Board::Board(int size) : board_size(size), board(size, std::vector<char>(size, '.')) {}
 
-//
-//void Board::display_board() const {
-//    std::cout << "\n";
-//    for (size_t i = 0; i < board_size; ++i) {
-//        std::cout << std::string(2 * i, ' ');
-//        for (size_t j = 0; j < board_size; ++j) {
-//            std::cout << board[i][j];
-//            if (j < board_size - 1) {
-//                std::cout << " - ";
-//            }
-//        }
-//        std::cout << " " << i + 1;
-//        std::cout << "\n";
-//
-//        if (i < board_size - 1) {
-//            std::cout << std::string(2 * i + 1, ' ');
-//            for (size_t j = 0; j < board_size - 1; ++j) {
-//                std::cout << "\\ / ";
-//            }
-//            std::cout << "\\";
-//            std::cout << "\n";
-//        }
-//    }
-//    // print the bottom coordinate labels
-//    std::cout << std::string(2 * (board_size - 1) - 1, ' ');
-//    for (size_t j = 0; j < board_size; ++j) {
-//        std::cout << "  " << static_cast<char>('a' + j) << " ";
-//    }
-//    std::cout << "\n\n";
-//}
+
+void Board::display_board() const {
+    std::cout << "\n";
+    for (size_t i = 0; i < board_size; ++i) {
+        std::cout << std::string(2 * i, ' ');
+        for (size_t j = 0; j < board_size; ++j) {
+            std::cout << board[i][j];
+            if (j < board_size - 1) {
+                std::cout << " - ";
+            }
+        }
+        std::cout << " " << i + 1;
+        std::cout << "\n";
+
+        if (i < board_size - 1) {
+            std::cout << std::string(2 * i + 1, ' ');
+            for (size_t j = 0; j < board_size - 1; ++j) {
+                std::cout << "\\ / ";
+            }
+            std::cout << "\\";
+            std::cout << "\n";
+        }
+    }
+    // print the bottom coordinate labels
+    std::cout << std::string(2 * (board_size - 1) - 1, ' ');
+    for (size_t j = 0; j < board_size; ++j) {
+        std::cout << "  " << static_cast<char>('a' + j) << " ";
+    }
+    std::cout << "\n\n";
+}
 
 //neurobenzene
-void Board::display_board() const {
-    for (int i = 0; i < board_size; i++) {
-        char c = 'a' + i;
-        std::cout << ' ' << c << ' ';
-    }
-    std::cout << std::endl;
-    for (int i = 0; i <= board_size; i++) {
-        if (i >= 1)
-            std::cout << ' ';
-        for (int k = 0; k < i - 1; k++)
-            std::cout << ' ';
-        if (i == board_size) {
-            std::cout << ' ' << ' ';
-            for (int j = 0; j < board_size; j++) {
-                char c = 'a' + j;
-                std::cout << c << ' ' << ' ';
-            }
-            std::cout << std::endl;
-            continue;
-        }
-        std::cout << (i + 1) << "\\";
-        for (int j = 0; j < board_size; j++) {
-            if (j <= board_size - 2) {
-                char c = board[i][j];
-                if (c >= 'a' && c <= 'z') c = toupper(c);
-                std::cout << c << ' ' << ' ';
-            }
-            if (j == board_size - 1) {
-                char c = board[i][j];
-                if (c >= 'a' && c <= 'z') c = toupper(c);
-                std::cout << c << '\\' << (i + 1);
-            }
-        }
-        std::cout << std::endl;
-    }
-}
+//void Board::display_board() const {
+//    for (int i = 0; i < board_size; i++) {
+//        char c = 'a' + i;
+//        std::cout << ' ' << c << ' ';
+//    }
+//    std::cout << std::endl;
+//    for (int i = 0; i <= board_size; i++) {
+//        if (i >= 1)
+//            std::cout << ' ';
+//        for (int k = 0; k < i - 1; k++)
+//            std::cout << ' ';
+//        if (i == board_size) {
+//            std::cout << ' ' << ' ';
+//            for (int j = 0; j < board_size; j++) {
+//                char c = 'a' + j;
+//                std::cout << c << ' ' << ' ';
+//            }
+//            std::cout << std::endl;
+//            continue;
+//        }
+//        std::cout << (i + 1) << "\\";
+//        for (int j = 0; j < board_size; j++) {
+//            if (j <= board_size - 2) {
+//                char c = board[i][j];
+//                if (c >= 'a' && c <= 'z') c = toupper(c);
+//                std::cout << c << ' ' << ' ';
+//            }
+//            if (j == board_size - 1) {
+//                char c = board[i][j];
+//                if (c >= 'a' && c <= 'z') c = toupper(c);
+//                std::cout << c << '\\' << (i + 1);
+//            }
+//        }
+//        std::cout << std::endl;
+//    }
+//}
 
 std::ostream& operator<<(std::ostream& os, const Board& board) {
     // Use the display_board function to print the board state
