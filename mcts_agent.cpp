@@ -4,6 +4,7 @@
 #include <random>
 #include <iostream>
 #include <cassert>
+#include <iomanip>
 #include "mcts_agent.h"
 
 MCTSAgent::MCTSAgent(double exploration_constant,
@@ -20,13 +21,20 @@ MCTSAgent::Node::Node(char player, std::pair<int, int> move,
     children(),
     parent(parent) {}
 
+char MCTSAgent::get_opponent(char player) const {
+    return (player == 'B') ? 'R' : 'B';
+}
+
 std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
     if (board.check_winner() != '.') {
         throw std::runtime_error("Game has already ended.");
     }
+    int MCTS_iteration_counter = 0;
+    if (verbose) {
+        
+		std::cout << "\n-------------MCTS VERBOSE START - " << player << " to move-------------" << std::endl;
+	}
     root = std::make_shared<Node>(player, std::make_pair(-1, -1), nullptr);
-    Board root_board(board);
-    expand_node(root, root_board);
     auto start_time = std::chrono::high_resolution_clock::now();
     auto end_time = start_time + move_time_limit;
     while (std::chrono::high_resolution_clock::now() < end_time) {
@@ -44,6 +52,16 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
         }
         char winner = simulated_board.check_winner();
         backpropagate(node, winner);
+        if (verbose) {
+            std::cout << "\nAfter backprop, root node has " << root->children.size() << " children. Their details are:\n";
+            for (const auto& child : root->children) {
+                double win_ratio = static_cast<double>(child->wins) / child->visits;
+                std::cout << "Child move: " << child->move.first << "," << child->move.second << " - Wins: " << child->wins << " Visits: " << child->visits << " Win ratio: " << win_ratio << std::endl;
+            }
+        }
+
+        MCTS_iteration_counter++;
+
     }
     double max_win_ratio = -1.;
     std::shared_ptr<Node> best_child;
@@ -64,6 +82,10 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
     if (!best_child) {
         throw std::runtime_error("No legal moves available.");
     }
+    else if (verbose) {
+        std::cout << "\nAfter " << MCTS_iteration_counter << " iterations, best node is " << best_child->move.first << ", " << best_child->move.second << " with win ratio " << std::setprecision(5) << max_win_ratio << std::endl;
+		std::cout << "\n--------------------MCTS VERBOSE END--------------------\n" << std::endl;
+	}
     return best_child->move;
 }
 
@@ -76,10 +98,10 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::select_node(
         double uct_score = static_cast<double>(child->wins) / child->visits +
             exploration_constant *
             std::sqrt(std::log(node->visits) / child->visits);
-        //if (verbose) {
-        //    std::cout << "select_node verbose: Child move: " << child->move.first << "," << child->move.second
-        //        << " UCT score: " << uct_score << std::endl;
-        //}
+        if (verbose) {
+            std::cout << "select_node verbose: Child move: " << child->move.first << "," << child->move.second
+                << " UCT score: " << uct_score << std::endl;
+        }
         if (uct_score > max_score) {
             max_score = uct_score;
             best_child = child;
@@ -120,6 +142,7 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::expand_node(
 
 
 void MCTSAgent::simulate_random_playout(Board& board, char current_player) {
+    bool has_winner = false;
     //Board simulation_board(board);  // Create a new board copy for the simulation
     while (board.check_winner() == '.') {
         std::vector<std::pair<int, int>> valid_moves;
@@ -136,29 +159,38 @@ void MCTSAgent::simulate_random_playout(Board& board, char current_player) {
         std::uniform_int_distribution<> dis(
             0, static_cast<int>(valid_moves.size() - 1));
         std::pair<int, int> random_move = valid_moves[dis(gen)];
-        if (verbose) {
-            std::cout << "verbose simulate_random_playout: Board state:\n" << board << std::endl;
-            std::cout << "verbose simulate_random_playout: Current player: " << current_player << std::endl;
-            std::cout << "verbose simulate_random_playout: Random move: " << random_move.first << "," << random_move.second << std::endl;
+        if (verbose && !has_winner) {
+            std::cout << "\nSIMULATING A RANDOM PLAYOUT: Current player is " << current_player << " in Board state:\n" << board;
+            std::cout << "Choosing random move " << random_move.first << "," << random_move.second << std::endl;
         }
         board.make_move(random_move.first, random_move.second, current_player);
         if (board.check_winner() != '.') {
+            has_winner = true;
+        }
+        if (has_winner) {
+            if (verbose) {
+                std::cout << "\nverbose simulate_random_playout: Board state:\n" << board << std::endl;
+                std::cout << "DETECTED WINNER in random playout: " << board.check_winner() << "\n\n";
+            }
             break;  // If the game has ended, break the loop.
         }
-        current_player = (current_player == 'B') ? 'R' : 'B';
+        else {
+            current_player = (current_player == 'B') ? 'R' : 'B';
+        }
     }
 }
 
+
 void MCTSAgent::backpropagate(const std::shared_ptr<Node>& node, char winner) {
     std::shared_ptr<Node> current_node = node;
-    while (current_node) {
+    while (current_node && current_node->parent) { // Skip root
         current_node->visits++;
-        if (current_node->player == winner) {
+        if (get_opponent(current_node->player) == winner) {
             current_node->wins++;
         }
         if (verbose) {
-            std::cout << "backpropagate verbose: Backpropagate move: " << current_node->move.first << "," << current_node->move.second
-                << " Wins: " << current_node->wins << " Visits: " << current_node->visits << std::endl;
+            std::cout << "BACKPROPAGATING MOVE: " << current_node->move.first << "," << current_node->move.second
+                << " wins: " << current_node->wins << " visits: " << current_node->visits << std::endl;
         }
         current_node = current_node->parent;
     }

@@ -29,9 +29,9 @@ private:
         char player;
         std::vector<std::shared_ptr<Node>> children;
         std::shared_ptr<Node> parent;
-
         Node(char player, std::pair<int, int> move, std::shared_ptr<Node> parent = nullptr);
     };
+    char get_opponent(char player) const;
     std::shared_ptr<Node> select_node(const std::shared_ptr<Node>& node, const Board& board);
     std::shared_ptr<Node> expand_node(const std::shared_ptr<Node>& node, Board& board);
     void simulate_random_playout(Board& board, char current_player);
