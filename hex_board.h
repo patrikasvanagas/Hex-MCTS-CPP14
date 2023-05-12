@@ -18,9 +18,11 @@ public:
     char check_winner() const;
     int get_board_size() const;
     friend std::ostream& operator<<(std::ostream& os, const Board& board);
+    int get_move_count() const;
 
 private:
     int board_size;
+    int move_count;
     std::vector<std::vector<char>> board;
     std::array<int, 6> dx = {-1, -1, 0, 1, 1, 0};
     std::array<int, 6> dy = {0, 1, 1, 0, -1, -1};

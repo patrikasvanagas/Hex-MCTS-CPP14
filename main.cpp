@@ -9,8 +9,8 @@
 int main() {
 
     HumanPlayer human;
-    MCTSPlayer mcts_agent_1(1.41, std::chrono::milliseconds(300), true);
-    MCTSPlayer mcts_agent_2(1.41, std::chrono::milliseconds(10000), false);
+    MCTSPlayer mcts_agent_1(1.41, std::chrono::milliseconds(3000), false);
+    MCTSPlayer mcts_agent_2(1.41, std::chrono::milliseconds(3000), false);
     Game game(3, &mcts_agent_1, &human);
     game.play();
 

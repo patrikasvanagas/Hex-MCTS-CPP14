@@ -31,9 +31,9 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
     }
     int MCTS_iteration_counter = 0;
     if (verbose) {
-        
-		std::cout << "\n-------------MCTS VERBOSE START - " << player << " to move-------------" << std::endl;
-	}
+
+        std::cout << "\n-------------MCTS VERBOSE START - " << player << " to move-------------" << std::endl;
+    }
     root = std::make_shared<Node>(player, std::make_pair(-1, -1), nullptr);
     auto start_time = std::chrono::high_resolution_clock::now();
     auto end_time = start_time + move_time_limit;
@@ -61,7 +61,6 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
         }
 
         MCTS_iteration_counter++;
-
     }
     double max_win_ratio = -1.;
     std::shared_ptr<Node> best_child;
@@ -84,11 +83,10 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
     }
     else if (verbose) {
         std::cout << "\nAfter " << MCTS_iteration_counter << " iterations, best node is " << best_child->move.first << ", " << best_child->move.second << " with win ratio " << std::setprecision(5) << max_win_ratio << std::endl;
-		std::cout << "\n--------------------MCTS VERBOSE END--------------------\n" << std::endl;
-	}
+        std::cout << "\n--------------------MCTS VERBOSE END--------------------\n" << std::endl;
+    }
     return best_child->move;
 }
-
 
 std::shared_ptr<MCTSAgent::Node> MCTSAgent::select_node(
     const std::shared_ptr<Node>& node, const Board& board) {
@@ -140,7 +138,6 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::expand_node(
     return node->children[dis(gen)];
 }
 
-
 void MCTSAgent::simulate_random_playout(Board& board, char current_player) {
     bool has_winner = false;
     //Board simulation_board(board);  // Create a new board copy for the simulation
@@ -180,7 +177,6 @@ void MCTSAgent::simulate_random_playout(Board& board, char current_player) {
     }
 }
 
-
 void MCTSAgent::backpropagate(const std::shared_ptr<Node>& node, char winner) {
     std::shared_ptr<Node> current_node = node;
     while (current_node && current_node->parent) { // Skip root
@@ -195,5 +191,3 @@ void MCTSAgent::backpropagate(const std::shared_ptr<Node>& node, char winner) {
         current_node = current_node->parent;
     }
 }
-
-
