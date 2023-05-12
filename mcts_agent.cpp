@@ -41,7 +41,7 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
         std::shared_ptr<Node> node = root;
         Board simulated_board(board);
         while (node->children.size() > 0 && node->visits > 0) {
-            node = select_node(node, simulated_board);
+            node = select_node(node);
         }
         if (simulated_board.check_winner() == '.') {
             node = expand_node(node, simulated_board);
@@ -89,7 +89,7 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
 }
 
 std::shared_ptr<MCTSAgent::Node> MCTSAgent::select_node(
-    const std::shared_ptr<Node>& node, const Board& board) {
+    const std::shared_ptr<Node>& node) {
     double max_score = std::numeric_limits<double>::lowest();
     std::shared_ptr<Node> best_child;
     for (const auto& child : node->children) {
