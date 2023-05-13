@@ -7,30 +7,30 @@
 #include <random>
 #include "board.h"
 
-class MCTSAgent {
+class Mcts_agent {
 public:
-    MCTSAgent(double exploration_constant, std::chrono::milliseconds move_time_limit, bool verbose = false);
+    Mcts_agent(double exploration_factor, std::chrono::milliseconds max_decision_time, bool is_verbose = false);
     std::pair<int, int> choose_move(const Board& board, char player);
 private:
-    double exploration_constant;
-    std::chrono::milliseconds move_time_limit;
-    bool verbose = false;
-    std::random_device rd;
-    std::mt19937 gen;
+    double exploration_factor;
+    std::chrono::milliseconds max_decision_time;
+    bool is_verbose = false;
+    std::random_device random_device;
+    std::mt19937 random_generator;
     struct Node;
     std::shared_ptr<Node> root;
     struct Node {
-        int wins;
-        int visits;
+        int win_count;
+        int visit_count;
         std::pair<int, int> move;
         char player;
-        std::vector<std::shared_ptr<Node>> children;
-        std::shared_ptr<Node> parent;
-        Node(char player, std::pair<int, int> move, std::shared_ptr<Node> parent = nullptr);
+        std::vector<std::shared_ptr<Node>> child_nodes;
+        std::shared_ptr<Node> parent_node;
+        Node(char player, std::pair<int, int> move, std::shared_ptr<Node> parent_node = nullptr);
     };
-    char get_opponent(char player) const;
-    std::shared_ptr<Node> select_child(const std::shared_ptr<Node>& node);
-    void expand_root(const std::shared_ptr<Node>& node, const Board& board);
+    char get_opponent(char current_player) const;
+    std::shared_ptr<Node> select_child(const std::shared_ptr<Node>& parent_node);
+    void expand_node(const std::shared_ptr<Node>& node, const Board& board);
     char simulate_random_playout(const std::shared_ptr<Node>& node, Board board);
     void backpropagate(std::shared_ptr<Node>& node, char winner);
 };

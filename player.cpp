@@ -32,6 +32,6 @@ MCTSPlayer::MCTSPlayer(double exploration_constant, std::chrono::milliseconds mo
     : exploration_constant(exploration_constant), move_time_limit(move_time_limit), verbose(verbose) {}
 
 std::pair<int, int> MCTSPlayer::choose_move(const Board& board, char player) {
-    MCTSAgent agent(exploration_constant, move_time_limit, verbose);
+    Mcts_agent agent(exploration_constant, move_time_limit, verbose);
     return agent.choose_move(board, player);
 }
