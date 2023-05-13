@@ -11,9 +11,6 @@ class MCTSAgent {
 public:
     MCTSAgent(double exploration_constant, std::chrono::milliseconds move_time_limit, bool verbose = false);
     std::pair<int, int> choose_move(const Board& board, char player);
-
-
-
 private:
     double exploration_constant;
     std::chrono::milliseconds move_time_limit;
@@ -32,10 +29,10 @@ private:
         Node(char player, std::pair<int, int> move, std::shared_ptr<Node> parent = nullptr);
     };
     char get_opponent(char player) const;
-    std::shared_ptr<Node> select_node(const std::shared_ptr<Node>& node);
-    std::shared_ptr<Node> expand_node(const std::shared_ptr<Node>& node, Board& board);
-    void simulate_random_playout(Board& board, char current_player);
-    void backpropagate(const std::shared_ptr<Node>& node, char winner);
+    std::shared_ptr<Node> select_child(const std::shared_ptr<Node>& node);
+    void expand_root(const std::shared_ptr<Node>& node, const Board& board);
+    char simulate_random_playout(const std::shared_ptr<Node>& node, Board& board);
+    void backpropagate(std::shared_ptr<Node>& parent, std::shared_ptr<Node>& child, char winner);
 };
 
 #endif
