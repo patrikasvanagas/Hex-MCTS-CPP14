@@ -10,11 +10,12 @@
 
 class Mcts_agent {
 public:
-    Mcts_agent(double exploration_factor, std::chrono::milliseconds max_decision_time, bool is_verbose = false);
+    Mcts_agent(double exploration_factor, std::chrono::milliseconds max_decision_time, bool is_parallelized, bool is_verbose = false);
     std::pair<int, int> choose_move(const Board& board, char player);
 private:
     double exploration_factor;
     std::chrono::milliseconds max_decision_time;
+    bool is_parallelized = false;
     bool is_verbose = false;
     std::random_device random_device;
     std::mt19937 random_generator;

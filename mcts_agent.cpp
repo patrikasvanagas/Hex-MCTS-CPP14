@@ -10,7 +10,7 @@
 #include "mcts_agent.h"
 
 Mcts_agent::Mcts_agent(double exploration_factor,
-    std::chrono::milliseconds max_decision_time, bool is_verbose) : exploration_factor(exploration_factor),
+    std::chrono::milliseconds max_decision_time, bool is_parallelized, bool is_verbose) : exploration_factor(exploration_factor),
     max_decision_time(max_decision_time), is_verbose(is_verbose), random_generator(random_device()) {}
 
 Mcts_agent::Node::Node(char player, std::pair<int, int> move,
