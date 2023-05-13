@@ -17,13 +17,13 @@ public:
 
 class MCTSPlayer : public Player {
 public:
-    MCTSPlayer(double exploration_constant, std::chrono::milliseconds move_time_limit, bool verbose = false);
+    MCTSPlayer(double exploration_factor, std::chrono::milliseconds max_decision_time, bool is_verbose = false);
     std::pair<int, int> choose_move(const Board& board, char player) override;
 
 private:
-    double exploration_constant;
-    std::chrono::milliseconds move_time_limit;
-    bool verbose;
+    double exploration_factor;
+    std::chrono::milliseconds max_decision_time;
+    bool is_verbose;
 };
 
 #endif
