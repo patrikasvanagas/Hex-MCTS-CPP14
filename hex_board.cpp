@@ -106,19 +106,15 @@ int Board::get_board_size() const {
 
 bool Board::dfs(int x, int y, int target_x, int target_y, char player, std::vector<std::vector<char>>& temp_board) const{
     if (x == target_x && y == target_y) return true;
-
     temp_board[x][y] = '.';
-
     for (int i = 0; i < 6; ++i) {
         int nx = x + dx[i];
         int ny = y + dy[i];
-
         if (is_within_bounds(nx, ny) && temp_board[nx][ny] == player && dfs(nx, ny, target_x, target_y, player, temp_board)) {
             temp_board[x][y] = player;
             return true;
         }
     }
-
     temp_board[x][y] = player;
     return false;
 }
@@ -147,7 +143,6 @@ char Board::check_winner() const{
             }
         }
     }
-
     // Check for player R (left to right)
     for (int i = 0; i < board_size; ++i) {
         if (board[i][0] == 'R') {
@@ -161,5 +156,7 @@ char Board::check_winner() const{
     }
     return '.';
 }
+
+
 
 

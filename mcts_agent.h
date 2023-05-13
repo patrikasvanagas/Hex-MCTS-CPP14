@@ -31,8 +31,8 @@ private:
     char get_opponent(char player) const;
     std::shared_ptr<Node> select_child(const std::shared_ptr<Node>& node);
     void expand_root(const std::shared_ptr<Node>& node, const Board& board);
-    char simulate_random_playout(const std::shared_ptr<Node>& node, Board& board);
-    void backpropagate(std::shared_ptr<Node>& parent, std::shared_ptr<Node>& child, char winner);
+    char simulate_random_playout(const std::shared_ptr<Node>& node, Board board);
+    void backpropagate(std::shared_ptr<Node>& node, char winner);
 };
 
 #endif
