@@ -17,6 +17,7 @@ public:
     void make_move(int x, int y, char player);
     char check_winner() const;
     int get_board_size() const;
+    std::vector<std::pair<int, int>> get_valid_moves() const;
     friend std::ostream& operator<<(std::ostream& os, const Board& board);
 
 private:

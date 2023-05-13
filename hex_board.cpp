@@ -157,6 +157,17 @@ char Board::check_winner() const{
     return '.';
 }
 
+std::vector<std::pair<int, int>> Board::get_valid_moves() const {
+    std::vector<std::pair<int, int>> valid_moves;
+    for (int x = 0; x < board_size; ++x) {
+        for (int y = 0; y < board_size; ++y) {
+            if (is_valid_move(x, y)) {
+                valid_moves.emplace_back(x, y);
+            }
+        }
+    }
+    return valid_moves;
+}
 
 
 

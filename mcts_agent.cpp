@@ -31,8 +31,7 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
         std::cout << "\n-------------MCTS VERBOSE START - " << player << " to move-------------" << std::endl;
     }
     Board simulation_board(board);
-    //create a root node which contains the colour of the player, a filler move (-1, -1), and its parent
-    //is a nullptr
+    //create a root node which contains the colour of the player, a filler move (-1, -1), and its parent is a nullptr
     root = std::make_shared<Node>(player, std::make_pair(-1, -1), nullptr);
     //add all of the children nodes of the root node to its children vector
     expand_root(root, board);
@@ -45,7 +44,6 @@ std::pair<int, int> MCTSAgent::choose_move(const Board& board, char player) {
         //passing the board by value
         char playout_winner = simulate_random_playout(chosen_child, board);
         backpropagate(chosen_child, playout_winner);
-        int foo = 5;
         if (verbose) {
             std::cout << "\nAFTER BACKPROP, root node has " << root->visits << " visits, " << root->wins << " wins, and " << root->children.size() << " children. Their details are:\n";
             for (const auto& child : root->children) {
@@ -95,14 +93,7 @@ char MCTSAgent::simulate_random_playout(const std::shared_ptr<Node>& node, Board
     Board simulation_board(board);  // Create a new board copy for the simulation
     while (board.check_winner() == '.') {
         current_player = (current_player == 'B') ? 'R' : 'B';
-        std::vector<std::pair<int, int>> valid_moves;
-        for (int x = 0; x < board.get_board_size(); ++x) {
-            for (int y = 0; y < board.get_board_size(); ++y) {
-                if (board.is_valid_move(x, y)) {
-                    valid_moves.push_back(std::make_pair(x, y));
-                }
-            }
-        }
+        std::vector<std::pair<int, int>> valid_moves = board.get_valid_moves();
         if (valid_moves.empty()) {
             throw std::runtime_error("No valid moves for the simulation found.");
         }
@@ -124,7 +115,6 @@ char MCTSAgent::simulate_random_playout(const std::shared_ptr<Node>& node, Board
     return current_player;
 }
 
-
 //finds the possible moves from the root and populates its
 //children vector with the nodes of the allowed moves with
 //the color of the current player.
@@ -135,18 +125,14 @@ void MCTSAgent::expand_root(
     if (expanded_board.check_winner() != '.') {
         throw std::runtime_error("Can't expand root: game already has a winner.");
     }
-    // Iterate through each possible move on the board
-    for (int x = 0; x < expanded_board.get_board_size(); ++x) {
-        for (int y = 0; y < expanded_board.get_board_size(); ++y) {
-            // If the move is valid, create a new child node for it
-            if (expanded_board.is_valid_move(x, y)) {
-                std::shared_ptr<Node> new_child =
-                    std::make_shared<Node>(node->player, std::make_pair(x, y), node);
-                node->children.push_back(new_child);
-                if (verbose) {
-                    std::cout << "\EXPANDED ROOT'S CHILD: " << x << "," << y << std::endl;
-                }
-            }
+    std::vector<std::pair<int, int>> valid_moves = board.get_valid_moves();
+    // Iterate through each valid move on the board
+    for (const auto & move: valid_moves){
+        std::shared_ptr<Node> new_child =
+            std::make_shared<Node>(node->player, move, node);
+        node->children.push_back(new_child);
+        if (verbose) {
+            std::cout << "\nEXPANDED ROOT'S CHILD: " << move.first << "," << move.second << std::endl;
         }
     }
     // If there are no valid moves, throw an exception
@@ -162,13 +148,11 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::select_child(const std::shared_ptr<N
     if (node->children.empty()) {
         return nullptr; // Or throw an exception
     }
-
     // Initialize best_child as the first child and calculate its UCT score
     std::shared_ptr<Node> best_child = node->children[0];
     double max_score = (best_child->visits == 0) ? std::numeric_limits<double>::max() :
         static_cast<double>(best_child->wins) / best_child->visits +
         exploration_constant * std::sqrt(std::log(node->visits) / best_child->visits);
-
     // Start loop from the second child
     for (auto it = std::next(node->children.begin()); it != node->children.end(); ++it) {
         const auto& child = *it;
@@ -188,8 +172,6 @@ std::shared_ptr<MCTSAgent::Node> MCTSAgent::select_child(const std::shared_ptr<N
 }
 
 
-
-
 //in the current implementation traverses the tree chosen child
 //to its root (1 level), but is suitable for traversing the whole tree.
 void MCTSAgent::backpropagate(std::shared_ptr<Node>& node, char winner) {
@@ -205,10 +187,6 @@ void MCTSAgent::backpropagate(std::shared_ptr<Node>& node, char winner) {
         current_node = current_node->parent;
     }
 }
-
-
-
-
 
 char MCTSAgent::get_opponent(char player) const {
     return (player == 'B') ? 'R' : 'B';
