@@ -5,6 +5,8 @@
 #include <iostream>
 #include <cassert>
 #include <iomanip>
+#include <thread>
+#include <mutex>
 #include "mcts_agent.h"
 
 Mcts_agent::Mcts_agent(double exploration_factor,
@@ -22,25 +24,46 @@ Mcts_agent::Node::Node(char player, std::pair<int, int> move,
 
 std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
 {
-    if (board.check_winner() != '.')
-    {
-        throw std::logic_error("Game has already ended.");
-    }
-    int mcts_iteration_counter = 0;
+    bool is_parallelized = false;
     if (is_verbose)
     {
         std::cout << "\n-------------MCTS VERBOSE START - " << player << " to move-------------" << std::endl;
     }
     Board simulation_board(board);
     root = std::make_shared<Node>(player, std::make_pair(-1, -1), nullptr);
-    expand_node(root, board);
+    std::vector<std::thread> threads;
+    unsigned int number_of_threads;
+    if (is_parallelized) {
+        number_of_threads = std::thread::hardware_concurrency();
+    }
+    int mcts_iteration_counter = 0;
     auto start_time = std::chrono::high_resolution_clock::now();
     auto end_time = start_time + max_decision_time;
+    expand_node(root, board);
     while (std::chrono::high_resolution_clock::now() < end_time)
     {
         std::shared_ptr<Node> chosen_child = select_child(root);
-        char playout_winner = simulate_random_playout(chosen_child, board);
-        backpropagate(chosen_child, playout_winner);
+
+        if (is_parallelized) {
+            std::vector<char> results(number_of_threads);
+            for (unsigned int thread_index = 0; thread_index < number_of_threads; thread_index++) {
+                threads.push_back(std::thread([&, thread_index]() {
+                    results[thread_index] = simulate_random_playout(chosen_child, board);
+                    }));
+            }
+            // Join all threads to ensure they finish
+            for (auto& thread : threads) {
+                thread.join();
+            }
+            threads.clear();
+            for (char playout_winner : results) {
+                backpropagate(chosen_child, playout_winner);
+            }
+        }
+        else {
+            char playout_winner = simulate_random_playout(chosen_child, board);
+            backpropagate(chosen_child, playout_winner);
+        }
         if (is_verbose)
         {
             std::cout << "\nAFTER BACKPROP, root node has " << root->visit_count << " visit_count, " << root->win_count << " win_count, and " << root->child_nodes.size() << " child_nodes. Their details are:\n";
@@ -95,9 +118,8 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
 //the color of the current player.
 void Mcts_agent::expand_node(const std::shared_ptr<Node>& node, const Board& board)
 {
-    Board expanded_board(board);
     // If there's already a winner, no need to expand the node
-    if (expanded_board.check_winner() != '.')
+    if (board.check_winner() != '.')
     {
         throw std::logic_error("Can't expand node: game already has a winner.");
     }
@@ -210,6 +232,7 @@ void Mcts_agent::backpropagate(std::shared_ptr<Node>& node, char winner)
     std::shared_ptr<Node> current_node = node;
     while (current_node != nullptr)
     {
+        std::lock_guard<std::mutex> lock(current_node->node_mutex); // Lock the node's mutex
         current_node->visit_count += 1;
         if (winner == current_node->player)
         {

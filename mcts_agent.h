@@ -5,6 +5,7 @@
 #include <memory>
 #include <chrono>
 #include <random>
+#include <mutex>
 #include "board.h"
 
 class Mcts_agent {
@@ -26,6 +27,7 @@ private:
         char player;
         std::vector<std::shared_ptr<Node>> child_nodes;
         std::shared_ptr<Node> parent_node;
+        std::mutex node_mutex;
         Node(char player, std::pair<int, int> move, std::shared_ptr<Node> parent_node = nullptr);
     };
     char get_opponent(char current_player) const;
