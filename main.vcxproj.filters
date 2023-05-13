@@ -18,13 +18,13 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hex_board.cpp">
+    <ClCompile Include="board.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mcts_agent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hex_game.cpp">
+    <ClCompile Include="game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="player.cpp">
@@ -32,13 +32,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="hex_board.h">
+    <ClInclude Include="board.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mcts_agent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hex_game.h">
+    <ClInclude Include="game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="player.h">

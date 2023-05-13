@@ -5,7 +5,7 @@
 #include <memory>
 #include <chrono>
 #include <random>
-#include "hex_board.h"
+#include "board.h"
 
 class MCTSAgent {
 public:

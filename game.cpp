@@ -1,5 +1,5 @@
 #include <iostream>
-#include "hex_game.h"
+#include "game.h"
 
 Game::Game(int size, Player* player1, Player* player2)
     : board(size), current_player_idx(0) {
