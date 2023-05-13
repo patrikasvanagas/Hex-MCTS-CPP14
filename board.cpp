@@ -60,6 +60,10 @@ bool Board::is_within_bounds(int move_x, int move_y) const {
     return move_x >= 0 && move_x < board_size&& move_y >= 0 && move_y < board_size;
 }
 
+int Board::get_board_size() const {
+    return board_size;
+}
+
 bool Board::depth_first_search(int start_x, int start_y, int destination_x, int destination_y, char player_symbol, std::vector<std::vector<char>>& game_board_snapshot) const {
     if (start_x == destination_x && start_y == destination_y) return true;
     game_board_snapshot[start_x][start_y] = '.';
@@ -74,8 +78,6 @@ bool Board::depth_first_search(int start_x, int start_y, int destination_x, int 
     game_board_snapshot[start_x][start_y] = player_symbol;
     return false;
 }
-
-
 
 char Board::check_winner() const {
     // Check for player B (top to bottom)
@@ -117,7 +119,6 @@ std::vector<std::pair<int, int>> Board::get_valid_moves() const {
 }
 
 //THE FOLLOWING METHODS ARE KEPT ONLY FOR DEBUGGING THE BOARD. THEY ARE NOT USED IN THE GAME.
-
 bool Board::are_cells_connected(int first_cell_x, int first_cell_y, int second_cell_x, int second_cell_y) const {
     for (int i = 0; i < neighbour_offset_x.size(); ++i) {
         int neighbour_cell_x = first_cell_x + neighbour_offset_x[i];

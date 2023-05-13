@@ -1,8 +1,8 @@
+#include <iostream>
 #include <limits>
 #include <memory>
 #include <cmath>
 #include <random>
-#include <iostream>
 #include <cassert>
 #include <iomanip>
 #include <thread>
@@ -11,7 +11,12 @@
 
 Mcts_agent::Mcts_agent(double exploration_factor,
     std::chrono::milliseconds max_decision_time, bool is_parallelized, bool is_verbose) : exploration_factor(exploration_factor),
-    max_decision_time(max_decision_time), is_verbose(is_verbose), random_generator(random_device()) {}
+    max_decision_time(max_decision_time), is_verbose(is_verbose), random_generator(random_device()) {
+    if (is_parallelized && is_verbose)
+    {
+        throw std::invalid_argument("Parallelization and verbose mode do not make sense together.");
+    }
+}
 
 Mcts_agent::Node::Node(char player, std::pair<int, int> move,
     std::shared_ptr<Node> parent_node) :
@@ -24,12 +29,10 @@ Mcts_agent::Node::Node(char player, std::pair<int, int> move,
 
 std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
 {
-    bool is_parallelized = false;
     if (is_verbose)
     {
         std::cout << "\n-------------MCTS VERBOSE START - " << player << " to move-------------" << std::endl;
     }
-    Board simulation_board(board);
     root = std::make_shared<Node>(player, std::make_pair(-1, -1), nullptr);
     std::vector<std::thread> threads;
     unsigned int number_of_threads;
@@ -43,7 +46,6 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
     while (std::chrono::high_resolution_clock::now() < end_time)
     {
         std::shared_ptr<Node> chosen_child = select_child(root);
-
         if (is_parallelized) {
             std::vector<char> results(number_of_threads);
             for (unsigned int thread_index = 0; thread_index < number_of_threads; thread_index++) {
@@ -51,7 +53,6 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
                     results[thread_index] = simulate_random_playout(chosen_child, board);
                     }));
             }
-            // Join all threads to ensure they finish
             for (auto& thread : threads) {
                 thread.join();
             }
@@ -73,7 +74,6 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
                 std::cout << "Child node " << child->move.first << "," << child->move.second << ": Wins: " << child->win_count << ", Visits: " << child->visit_count << ". Win ratio: " << win_ratio << std::endl;
             }
         }
-
         mcts_iteration_counter++;
     }
     if (is_verbose)
@@ -113,9 +113,6 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
     return best_child->move;
 }
 
-//finds the possible moves from the root and populates its
-//child_nodes vector with the nodes of the allowed moves with
-//the color of the current player.
 void Mcts_agent::expand_node(const std::shared_ptr<Node>& node, const Board& board)
 {
     // If there's already a winner, no need to expand the node
@@ -125,7 +122,6 @@ void Mcts_agent::expand_node(const std::shared_ptr<Node>& node, const Board& boa
     }
 
     std::vector<std::pair<int, int>> valid_moves = board.get_valid_moves();
-    // Iterate through each valid move on the board
     for (const auto& move : valid_moves)
     {
         std::shared_ptr<Node> new_child =
@@ -136,16 +132,12 @@ void Mcts_agent::expand_node(const std::shared_ptr<Node>& node, const Board& boa
             std::cout << "\nEXPANDED ROOT'S CHILD: " << move.first << "," << move.second << std::endl;
         }
     }
-
-    // If there are no valid moves, throw an exception
     if (node->child_nodes.empty())
     {
         throw std::runtime_error("No valid moves found");
     }
 }
 
-//returns the child of the root node with the highest UCB score. If there's an unvisited child,
-//returns that instead.
 std::shared_ptr<Mcts_agent::Node > Mcts_agent::select_child(const std::shared_ptr<Node>& parent_node)
 {
     if (parent_node->child_nodes.empty())
@@ -181,8 +173,6 @@ std::shared_ptr<Mcts_agent::Node > Mcts_agent::select_child(const std::shared_pt
     return best_child;
 }
 
-//takes in the chosen best child and the current state of the board. Does a random playout
-//and returns the winner of the playout as a char
 char Mcts_agent::simulate_random_playout(const std::shared_ptr<Node>& node, Board board)
 {
     char current_player = node->player;
