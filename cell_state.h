@@ -9,7 +9,7 @@ enum class Cell_state {
     Red
 };
 
-// Overload the stream insertion operator for CellState
+// Overload the stream insertion operator for Cell_state
 std::ostream& operator<<(std::ostream& os, const Cell_state& state);
 
 #endif // CELL_STATE_H

@@ -1,5 +1,12 @@
 #include "console_interface.h"
 
+bool is_integer(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
+
 char get_yes_or_no_response(const std::string& prompt) {
     char response;
     while (true) {
@@ -22,41 +29,95 @@ char get_yes_or_no_response(const std::string& prompt) {
     }
 }
 
-bool is_integer(const std::string& s)
-{
-    std::string::const_iterator it = s.begin();
-    while (it != s.end() && std::isdigit(*it)) ++it;
-    return !s.empty() && it == s.end();
+template <>
+int get_parameter_within_bounds<int>(const std::string& prompt, int lower_bound, int upper_bound) {
+    std::string input;
+    int value;
+
+    while (true) {
+        std::cout << prompt;
+        std::cin >> input;
+
+        // Check if input is a valid integer
+        if (!is_integer(input)) {
+            std::cout << "Invalid input. Please enter a valid integer.\n";
+            continue;
+        }
+
+        // Convert string to int
+        value = std::stoi(input);
+
+        // Check if value is within bounds
+        if (!is_in_bounds(value, lower_bound, upper_bound)) {
+            std::cout << "Invalid value. Please try again.\n";
+        }
+        else {
+            break;
+        }
+    }
+
+    return value;
 }
 
-//void play_against_robot() {
-//    int player_number = get_parameter_within_bounds("Choose Player number (1 or 2): ", 1, 2);
-//
-//    int board_size = get_parameter_within_bounds("Enter board size (between 2 and 11): ", 2, 11);
-//
-//    double exploration_constant = 1.4;
-//    if (get_yes_or_no_response("Would you like to change the default exploration constant (1.4)? (y/n): ") == 'y') {
-//        exploration_constant = get_parameter_within_bounds("Enter exploration constant (between 0.1 and 2): ", 0.1, 2.0);
-//    }
-//
-//    bool is_parallelized = (get_yes_or_no_response("Would you like to enable parallelized mode? (y/n): ") == 'y');
-//
-//    bool is_verbose = (get_yes_or_no_response("Would you like to enable verbose mode? (y/n): ") == 'y');
-//
-//    auto human_player = std::make_unique<Human_player>();
-//    auto mcts_agent_player = std::make_unique<Mcts_player>(exploration_constant, std::chrono::milliseconds(100), is_parallelized, is_verbose);
-//
-//    if (player_number == 1) {
-//        Game game(board_size, std::move(human_player), std::move(mcts_agent_player));
-//        game.play();
-//    }
-//    else {
-//        Game game(board_size, std::move(mcts_agent_player), std::move(human_player));
-//        game.play();
-//    }
-//}
+template <>
+double get_parameter_within_bounds<double>(const std::string& prompt, double lower_bound, double upper_bound) {
+    std::string input;
+    double value;
 
+    while (true) {
+        std::cout << prompt;
+        std::cin >> input;
 
+        // Check if input is a valid double
+        try {
+            value = std::stod(input);
+        }
+        catch (std::invalid_argument&) {
+            std::cout << "Invalid input. Please enter a valid number.\n";
+            continue;
+        }
+
+        // Check if value is within bounds
+        if (!is_in_bounds(value, lower_bound, upper_bound)) {
+            std::cout << "Invalid value. Please try again.\n";
+        }
+        else {
+            break;
+        }
+    }
+
+    return value;
+}
+
+void play_against_robot() {
+    int player_number = get_parameter_within_bounds("Enter '1' if you want to be Player 1 (Blue) or '2' if you want to be Player 2 (Red): ", 1, 2);
+    int board_size = get_parameter_within_bounds("Enter board size (between 2 and 11): ", 2, 11);
+    int max_decision_time_ms = get_parameter_within_bounds("Enter max decision time for the robot in milliseconds (at least 100): ", 100, INT_MAX);
+
+    double exploration_constant = 1.41;
+    if (get_yes_or_no_response("Would you like to change the default exploration constant (1.41)? (y/n): ") == 'y') {
+        exploration_constant = get_parameter_within_bounds("Enter exploration constant (between 0.1 and 2): ", 0.1, 2.0);
+    }
+    bool is_parallelized = (get_yes_or_no_response("Would you like to parallelize the agent? (y/n): ") == 'y');
+    bool is_verbose;
+    if (!is_parallelized) {
+        bool is_verbose = (get_yes_or_no_response("Would you like to enable verbose mode? (y/n): ") == 'y');
+	}
+    else {
+		bool is_verbose = false;
+	}
+    auto human_player = std::make_unique<Human_player>();
+    auto mcts_agent_player = std::make_unique<Mcts_player>(exploration_constant, std::chrono::milliseconds(max_decision_time_ms), is_parallelized, is_verbose);
+
+    if (player_number == 1) {
+        Game game(board_size, std::move(human_player), std::move(mcts_agent_player));
+        game.play();
+    }
+    else {
+        Game game(board_size, std::move(mcts_agent_player), std::move(human_player));
+        game.play();
+    }
+}
 
 
 void start_robot_arena() {
@@ -121,8 +182,7 @@ void print_welcome_ascii_art() {
 | || | | __| \ \/ /  / /  |  \/  | ((/ __| |_   _|  / __|  
 | __ | | _|   >  <  /_/   | |\/| |  | (__    | |    \__ \  
 |_||_| |___| /_/\_\       |_|  |_|   \___|   |_|    |___/  
-                                                           
-     
+                                                       
 )" << '\n';
 }
 
@@ -142,12 +202,13 @@ void print_exit_ascii_art() {
 }
 
 void run_console_interface() {
-    try {
+    
         print_welcome_ascii_art();
         std::cout << "Welcome, Human.\n\n";
 
         bool is_running = true;
         while (is_running) {
+        try {
             int option = 0;
             std::cout << "SELECT AN OPTION:\n"
                 << "1) Play against a robot\n"
@@ -159,11 +220,9 @@ void run_console_interface() {
             std::cin >> option;
             std::cout << "\n";
 
-            int foo = 5;
             switch (option) {
             case 1:
-                //play_against_robot();
-                foo += 1;
+                play_against_robot();
                 break;
             case 2:
                 start_robot_arena();
@@ -182,17 +241,16 @@ void run_console_interface() {
                 break;
             }
         }
-
-        print_exit_ascii_art();
+        catch (const std::invalid_argument& e) {
+            std::cout << "Error: " << e.what() << "\n";
+        }
+        catch (const std::logic_error& e) {
+            std::cout << "Error: " << e.what() << "\n";
+        }
+        catch (const std::runtime_error& e) {
+            std::cout << "Error: " << e.what() << "\n";
+        }
     }
-    catch (const std::invalid_argument& e) {
-        std::cout << "Error: " << e.what() << "\n";
-    }
-    catch (const std::logic_error& e) {
-        std::cout << "Error: " << e.what() << "\n";
-    }
-    catch (const std::runtime_error& e) {
-        std::cout << "Error: " << e.what() << "\n";
-    }
+    print_exit_ascii_art();
 }
 
