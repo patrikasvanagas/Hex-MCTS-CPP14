@@ -15,7 +15,7 @@ Mcts_agent::Mcts_agent(double exploration_factor,
     max_decision_time(max_decision_time), is_verbose(is_verbose), random_generator(random_device()) {
     if (is_parallelized && is_verbose)
     {
-        throw std::invalid_argument("Concurrent playouts and verbose mode do not make sense together.");
+        throw std::logic_error("Concurrent playouts and verbose mode do not make sense together.");
     }
 }
 
@@ -97,10 +97,6 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
     }
     double max_win_ratio = -1.;
     std::shared_ptr<Node> best_child;
-    if (root->child_nodes.empty())
-    {
-        throw std::runtime_error("Root does not have child_nodes.");
-    }
     for (const auto& child : root->child_nodes)
     {
         double win_ratio = static_cast<double> (child->win_count) / child->visit_count;
@@ -125,7 +121,7 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
     }
     if (!best_child)
     {
-        throw std::runtime_error("Choose move did not find the best child.");
+        throw std::runtime_error("Statistics are not enough to find the best child.");
     }
     else if (is_verbose)
     {
@@ -137,11 +133,6 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
 
 void Mcts_agent::expand_node(const std::shared_ptr<Node>& node, const Board& board)
 {
-    if (board.check_winner() != '.')
-    {
-        throw std::logic_error("Can't expand node: game already has a winner.");
-    }
-
     std::vector<std::pair<int, int>> valid_moves = board.get_valid_moves();
     for (const auto& move : valid_moves)
     {
@@ -152,10 +143,6 @@ void Mcts_agent::expand_node(const std::shared_ptr<Node>& node, const Board& boa
         {
             std::cout << "EXPANDED ROOT'S CHILD: " << move.first << "," << move.second << std::endl;
         }
-    }
-    if (node->child_nodes.empty())
-    {
-        throw std::runtime_error("No valid moves found");
     }
 }
 
@@ -171,11 +158,6 @@ double Mcts_agent::calculate_uct_score(const std::shared_ptr<Node>& child_node, 
 
 std::shared_ptr<Mcts_agent::Node > Mcts_agent::select_child(const std::shared_ptr<Node>& parent_node)
 {
-    if (parent_node->child_nodes.empty())
-    {
-        throw std::logic_error("Root has no children.");
-    }
-
     // Initialize best_child as the first child and calculate its UCT score
     std::shared_ptr<Node> best_child = parent_node->child_nodes[0];
     double max_score = calculate_uct_score(best_child, parent_node);
@@ -218,11 +200,6 @@ char Mcts_agent::simulate_random_playout(const std::shared_ptr<Node>& node, Boar
     {
         current_player = (current_player == 'B') ? 'R' : 'B';
         std::vector<std::pair<int, int>> valid_moves = board.get_valid_moves();
-        if (valid_moves.empty())
-        {
-            throw std::runtime_error("No valid moves for the simulation found.");
-        }
-
         std::uniform_int_distribution < > distribution(0, static_cast<int> (valid_moves.size() - 1));
         std::pair<int, int> random_move = valid_moves[distribution(random_generator)];
         if (is_verbose)

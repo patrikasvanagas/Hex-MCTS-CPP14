@@ -18,7 +18,7 @@ void Game::play() {
         std::pair<int, int> chosen_move = players[current_player_index]->choose_move(board, current_player);
         int chosen_row  = chosen_move.first + 1;
         char chosen_col = chosen_move.second + 'a';
-        std::cout << "Player " << current_player << " chose chosen_move: " << chosen_row  << " " << chosen_col << std::endl;
+        std::cout << "Player " << current_player << " chose move: " << chosen_row  << " " << chosen_col << std::endl;
         board.make_move(chosen_move.first, chosen_move.second, current_player);
         switch_player();
     }

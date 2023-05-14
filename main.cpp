@@ -4,9 +4,9 @@
 
 int main() {
     Human_player human;
-    Mcts_player mcts_agent_1(1.41, std::chrono::milliseconds(100), false, true);
-    Mcts_player mcts_agent_2(1.41, std::chrono::milliseconds(2000), false, false);
-    Game game(2, &mcts_agent_1, &human);
+    Mcts_player mcts_agent(1.41, std::chrono::milliseconds(10000), false, false);
+    Mcts_player parallelized_mcts_agent(1.41, std::chrono::milliseconds(10000), true, false);
+    Game game(7, &mcts_agent, &parallelized_mcts_agent);
     game.play();
 	return 0;
 }

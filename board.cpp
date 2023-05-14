@@ -7,7 +7,11 @@
 #include "iterator"
 #include "board.h"
 
-Board::Board(int size) : board_size(size), board(size, std::vector<char>(size, '.')) {}
+Board::Board(int size) : board_size(size), board(size, std::vector<char>(size, '.')) {
+    if (size < 2) {
+        throw std::invalid_argument("Board size cannot be less than 2.");
+    }
+}
 
 void Board::display_board() const {
     std::cout << "\n";
