@@ -3,6 +3,7 @@
 
 #include "board.h"
 #include "player.h"
+#include "cell_state.h"
 
 class Game {
 public:

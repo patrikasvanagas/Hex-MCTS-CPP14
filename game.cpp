@@ -12,9 +12,9 @@ void Game::switch_player() {
 }
 
 void Game::play() {
-    while (board.check_winner() == '.') {
+    while (board.check_winner() == Cell_state::Empty) {
         board.display_board(); 
-        char current_player = current_player_index == 0 ? 'B' : 'R';
+        Cell_state current_player = current_player_index == 0 ? Cell_state::Blue : Cell_state::Red;
         std::pair<int, int> chosen_move = players[current_player_index]->choose_move(board, current_player);
         int chosen_row  = chosen_move.first + 1;
         char chosen_col = chosen_move.second + 'a';

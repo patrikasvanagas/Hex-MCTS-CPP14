@@ -19,7 +19,7 @@ Mcts_agent::Mcts_agent(double exploration_factor,
     }
 }
 
-Mcts_agent::Node::Node(char player, std::pair<int, int> move,
+Mcts_agent::Node::Node(Cell_state player, std::pair<int, int> move,
     std::shared_ptr<Node> parent_node) :
     win_count(0),
     visit_count(0),
@@ -28,7 +28,7 @@ Mcts_agent::Node::Node(char player, std::pair<int, int> move,
     child_nodes(),
     parent_node(parent_node) {}
 
-std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
+std::pair<int, int> Mcts_agent::choose_move(const Board& board, Cell_state player)
 {
     if (is_verbose)
     {
@@ -52,7 +52,7 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
 		}
         std::shared_ptr<Node> chosen_child = select_child(root);
         if (is_parallelized) {
-            std::vector<char> results(number_of_threads);
+            std::vector<Cell_state> results(number_of_threads);
             for (unsigned int thread_index = 0; thread_index < number_of_threads; thread_index++) {
                 threads.push_back(std::thread([&, thread_index]() {
                     results[thread_index] = simulate_random_playout(chosen_child, board);
@@ -62,12 +62,12 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
                 thread.join();
             }
             threads.clear();
-            for (char playout_winner : results) {
+            for (Cell_state playout_winner : results) {
                 backpropagate(chosen_child, playout_winner);
             }
         }
         else {
-            char playout_winner = simulate_random_playout(chosen_child, board);
+            Cell_state playout_winner = simulate_random_playout(chosen_child, board);
             backpropagate(chosen_child, playout_winner);
         }
         if (is_verbose)
@@ -187,18 +187,18 @@ std::shared_ptr<Mcts_agent::Node > Mcts_agent::select_child(const std::shared_pt
     return best_child;
 }
 
-char Mcts_agent::simulate_random_playout(const std::shared_ptr<Node>& node, Board board)
+Cell_state Mcts_agent::simulate_random_playout(const std::shared_ptr<Node>& node, Board board)
 {
-    char current_player = node->player;
+    Cell_state current_player = node->player;
     board.make_move(node->move.first, node->move.second, current_player);
     if (is_verbose)
     {
         std::cout << "\nSIMULATING A RANDOM PLAYOUT from node " << node->move.first << ", " << node->move.second << ". Simulation board is in state:\n" << board;
     }
 
-    while (board.check_winner() == '.')
+    while (board.check_winner() == Cell_state::Empty)
     {
-        current_player = (current_player == 'B') ? 'R' : 'B';
+        current_player = (current_player == Cell_state::Blue) ? Cell_state::Red : Cell_state::Blue;
         std::vector<std::pair<int, int>> valid_moves = board.get_valid_moves();
         std::uniform_int_distribution < > distribution(0, static_cast<int> (valid_moves.size() - 1));
         std::pair<int, int> random_move = valid_moves[distribution(random_generator)];
@@ -209,7 +209,7 @@ char Mcts_agent::simulate_random_playout(const std::shared_ptr<Node>& node, Boar
         }
 
         board.make_move(random_move.first, random_move.second, current_player);
-        if (board.check_winner() != '.')
+        if (board.check_winner() != Cell_state::Empty)
         {
             if (is_verbose)
             {
@@ -225,7 +225,7 @@ char Mcts_agent::simulate_random_playout(const std::shared_ptr<Node>& node, Boar
 
 //in the current implementation traverses the tree chosen child
 //to its root (1 level), but is suitable for traversing the whole tree.
-void Mcts_agent::backpropagate(std::shared_ptr<Node>& node, char winner)
+void Mcts_agent::backpropagate(std::shared_ptr<Node>& node, Cell_state winner)
 {
     std::shared_ptr<Node> current_node = node;
     while (current_node != nullptr)

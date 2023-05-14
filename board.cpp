@@ -7,7 +7,7 @@
 #include "iterator"
 #include "board.h"
 
-Board::Board(int size) : board_size(size), board(size, std::vector<char>(size, '.')) {
+Board::Board(int size) : board_size(size), board(size, std::vector<Cell_state>(size, Cell_state::Empty)) {
     if (size < 2) {
         throw std::invalid_argument("Board size cannot be less than 2.");
     }
@@ -53,10 +53,10 @@ bool Board::is_within_bounds(int move_x, int move_y) const {
 }
 
 bool Board::is_valid_move(int move_x, int move_y) const {
-    return is_within_bounds(move_x, move_y) && (board[move_x][move_y] == '.');
+    return is_within_bounds(move_x, move_y) && (board[move_x][move_y] == Cell_state::Empty);
 }
 
-void Board::make_move(int move_x, int move_y, char player) {
+void Board::make_move(int move_x, int move_y, Cell_state player) {
     if (!is_valid_move(move_x, move_y)) {
         throw std::invalid_argument("Invalid move attempt at position (" + std::to_string(move_x) + ", " + std::to_string(move_y) + ")!");
     }
@@ -67,9 +67,9 @@ int Board::get_board_size() const {
     return board_size;
 }
 
-bool Board::depth_first_search(int start_x, int start_y, int destination_x, int destination_y, char player_symbol, std::vector<std::vector<char>>& game_board_snapshot) const {
+bool Board::depth_first_search(int start_x, int start_y, int destination_x, int destination_y, Cell_state player_symbol, std::vector<std::vector<Cell_state>>& game_board_snapshot) const {
     if (start_x == destination_x && start_y == destination_y) return true;
-    game_board_snapshot[start_x][start_y] = '.';
+    game_board_snapshot[start_x][start_y] = Cell_state::Empty;
     for (int i = 0; i < neighbour_offset_x.size(); ++i) {
         int new_x = start_x + neighbour_offset_x[i];
         int new_y = start_y + neighbour_offset_y[i];
@@ -82,30 +82,30 @@ bool Board::depth_first_search(int start_x, int start_y, int destination_x, int 
     return false;
 }
 
-char Board::check_winner() const {
+Cell_state Board::check_winner() const {
     // Check for player B (top to bottom)
     for (int top_row_index = 0; top_row_index < board_size; ++top_row_index) {
-        if (board[0][top_row_index] == 'B') {
+        if (board[0][top_row_index] == Cell_state::Blue) {
             for (int bottom_row_index = 0; bottom_row_index < board_size; ++bottom_row_index) {
-                std::vector<std::vector<char>> board_copy = board;
-                if (board[board_size - 1][bottom_row_index] == 'B' && depth_first_search(0, top_row_index, board_size - 1, bottom_row_index, 'B', board_copy)) {
-                    return 'B';
+                std::vector<std::vector<Cell_state>> board_copy = board;
+                if (board[board_size - 1][bottom_row_index] == Cell_state::Blue && depth_first_search(0, top_row_index, board_size - 1, bottom_row_index, Cell_state::Blue, board_copy)) {
+                    return Cell_state::Blue;
                 }
             }
         }
     }
     // Check for player R (left to right)
     for (int left_column_index = 0; left_column_index < board_size; ++left_column_index) {
-        if (board[left_column_index][0] == 'R') {
+        if (board[left_column_index][0] == Cell_state::Red) {
             for (int right_column_index = 0; right_column_index < board_size; ++right_column_index) {
-                std::vector<std::vector<char>> board_copy = board;
-                if (board[right_column_index][board_size - 1] == 'R' && depth_first_search(left_column_index, 0, right_column_index, board_size - 1, 'R', board_copy)) {
-                    return 'R';
+                std::vector<std::vector<Cell_state>> board_copy = board;
+                if (board[right_column_index][board_size - 1] == Cell_state::Red && depth_first_search(left_column_index, 0, right_column_index, board_size - 1, Cell_state::Red, board_copy)) {
+                    return Cell_state::Red;
                 }
             }
         }
     }
-    return '.';
+    return Cell_state::Empty;
 }
 
 
@@ -135,53 +135,53 @@ bool Board::are_cells_connected(int first_cell_x, int first_cell_y, int second_c
 
 void Board::print_board_and_winner(Board& board) {
     board.display_board();
-    char winner = board.check_winner();
+    Cell_state winner = board.check_winner();
     std::cout << "Winner: " << winner << std::endl;
     std::cout << "------------------" << std::endl;
 }
 
 void Board::test_winning_condition() {
-    // Test case 1: 3x3 board, player 'B' wins
+    // Test case 1: 3x3 board, player Cell_state::Blue wins
     Board board1(3);
-    board1.make_move(0, 0, 'B');
-    board1.make_move(1, 0, 'B');
-    board1.make_move(2, 0, 'B');
+    board1.make_move(0, 0, Cell_state::Blue);
+    board1.make_move(1, 0, Cell_state::Blue);
+    board1.make_move(2, 0, Cell_state::Blue);
     print_board_and_winner(board1);
 
-    // Test case 2: 3x3 board, player 'R' wins
+    // Test case 2: 3x3 board, player Cell_state::Red wins
     Board board2(3);
-    board2.make_move(0, 0, 'R');
-    board2.make_move(0, 1, 'R');
-    board2.make_move(0, 2, 'R');
+    board2.make_move(0, 0, Cell_state::Red);
+    board2.make_move(0, 1, Cell_state::Red);
+    board2.make_move(0, 2, Cell_state::Red);
     print_board_and_winner(board2);
 
-    // Test case 3: 3x3 board, player 'B' wins
+    // Test case 3: 3x3 board, player Cell_state::Blue wins
     Board board3(3);
-    board3.make_move(0, 2, 'B');
-    board3.make_move(1, 1, 'B');
-    board3.make_move(2, 1, 'B');
+    board3.make_move(0, 2, Cell_state::Blue);
+    board3.make_move(1, 1, Cell_state::Blue);
+    board3.make_move(2, 1, Cell_state::Blue);
     print_board_and_winner(board3);
 
-    // Test case 4: 3x3 board, player 'R' wins
+    // Test case 4: 3x3 board, player Cell_state::Red wins
     Board board4(3);
-    board4.make_move(1, 0, 'R');
-    board4.make_move(1, 1, 'R');
-    board4.make_move(0, 2, 'R');
+    board4.make_move(1, 0, Cell_state::Red);
+    board4.make_move(1, 1, Cell_state::Red);
+    board4.make_move(0, 2, Cell_state::Red);
     print_board_and_winner(board4);
 
     // Test case 5: 3x3 board, no winner
     Board board5(3);
-    board5.make_move(0, 0, 'B');
-    board5.make_move(1, 1, 'B');
-    board5.make_move(2, 0, 'B');
+    board5.make_move(0, 0, Cell_state::Blue);
+    board5.make_move(1, 1, Cell_state::Blue);
+    board5.make_move(2, 0, Cell_state::Blue);
     print_board_and_winner(board5);
 
     Board board6(5);
-    board6.make_move(3, 0, 'R');
-    board6.make_move(3, 1, 'R');
-    board6.make_move(2, 2, 'R');
-    board6.make_move(1, 2, 'R');
-    board6.make_move(1, 3, 'R');
-    board6.make_move(1, 4, 'R');
+    board6.make_move(3, 0, Cell_state::Red);
+    board6.make_move(3, 1, Cell_state::Red);
+    board6.make_move(2, 2, Cell_state::Red);
+    board6.make_move(1, 2, Cell_state::Red);
+    board6.make_move(1, 3, Cell_state::Red);
+    board6.make_move(1, 4, Cell_state::Red);
     print_board_and_winner(board6);
 }
