@@ -40,13 +40,16 @@ void Board::display_board() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Board& board) {
-    // Use the display_board function to print the board state
     board.display_board();
     return os;
 }
 
+bool Board::is_within_bounds(int move_x, int move_y) const {
+    return move_x >= 0 && move_x < board_size && move_y >= 0 && move_y < board_size;
+}
+
 bool Board::is_valid_move(int move_x, int move_y) const {
-    return (move_x >= 0 && move_x < board_size) && (move_y >= 0 && move_y < board_size) && (board[move_x][move_y] == '.');
+    return is_within_bounds(move_x, move_y) && (board[move_x][move_y] == '.');
 }
 
 void Board::make_move(int move_x, int move_y, char player) {
@@ -54,10 +57,6 @@ void Board::make_move(int move_x, int move_y, char player) {
         throw std::invalid_argument("Invalid move attempt at position (" + std::to_string(move_x) + ", " + std::to_string(move_y) + ")!");
     }
     board[move_x][move_y] = player;
-}
-
-bool Board::is_within_bounds(int move_x, int move_y) const {
-    return move_x >= 0 && move_x < board_size&& move_y >= 0 && move_y < board_size;
 }
 
 int Board::get_board_size() const {

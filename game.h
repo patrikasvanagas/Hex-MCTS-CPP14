@@ -6,13 +6,13 @@
 
 class Game {
 public:
-    Game(int size, Player* player1, Player* player2);
+    Game(int board_size , Player* player_1, Player* player_2);
     void play();
 
 private:
     Board board;
     Player* players[2];
-    int current_player_idx;
+    int current_player_index;
     void switch_player();
 };
 

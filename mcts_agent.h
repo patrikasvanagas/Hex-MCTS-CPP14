@@ -31,9 +31,9 @@ private:
         std::mutex node_mutex;
         Node(char player, std::pair<int, int> move, std::shared_ptr<Node> parent_node = nullptr);
     };
-    char get_opponent(char current_player) const;
-    std::shared_ptr<Node> select_child(const std::shared_ptr<Node>& parent_node);
     void expand_node(const std::shared_ptr<Node>& node, const Board& board);
+    double calculate_uct_score(const std::shared_ptr<Node>& child_node, const std::shared_ptr<Node>& parent_node);
+    std::shared_ptr<Node> select_child(const std::shared_ptr<Node>& parent_node);
     char simulate_random_playout(const std::shared_ptr<Node>& node, Board board);
     void backpropagate(std::shared_ptr<Node>& node, char winner);
 };
