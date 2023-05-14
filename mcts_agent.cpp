@@ -45,11 +45,11 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, Cell_state playe
     auto start_time = std::chrono::high_resolution_clock::now();
     auto end_time = start_time + max_decision_time;
     while (std::chrono::high_resolution_clock::now() < end_time)
-    {   
+    {
         if (is_verbose)
         {
-			std::cout << "\n------------------STARTING SIMULATION " << mcts_iteration_counter + 1 << "------------------" << std::endl;
-		}
+            std::cout << "\n------------------STARTING SIMULATION " << mcts_iteration_counter + 1 << "------------------" << std::endl;
+        }
         std::shared_ptr<Node> chosen_child = select_child(root);
         if (is_parallelized) {
             std::vector<Cell_state> results(number_of_threads);

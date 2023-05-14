@@ -129,15 +129,16 @@
   <ItemGroup>
     <ClCompile Include="board.cpp" />
     <ClCompile Include="cell_state.cpp" />
+    <ClCompile Include="console_interface.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mcts_agent.cpp" />
     <ClCompile Include="player.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="abstract_board.h" />
     <ClInclude Include="board.h" />
     <ClInclude Include="cell_state.h" />
+    <ClInclude Include="console_interface.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="mcts_agent.h" />
     <ClInclude Include="player.h" />

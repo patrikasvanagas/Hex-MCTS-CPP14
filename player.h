@@ -17,7 +17,7 @@ public:
 
 class Mcts_player : public Player {
 public:
-    Mcts_player(double exploration_factor, std::chrono::milliseconds max_decision_time, bool is_parallelized=false, bool is_verbose = false);
+    Mcts_player(double exploration_factor, std::chrono::milliseconds max_decision_time, bool is_parallelized = false, bool is_verbose = false);
     std::pair<int, int> choose_move(const Board& board, Cell_state player) override;
 
 private:
