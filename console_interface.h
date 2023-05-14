@@ -2,9 +2,10 @@
 #define CONSOLE_INTERFACE_H
 
 #include <chrono>
-#include <memory>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
+
 #include "game.h"
 
 char get_yes_or_no_response();
@@ -20,18 +21,22 @@ void run_console_interface();
 // Template function for checking if value is within bounds
 template <typename T>
 bool is_in_bounds(T value, T lower_bound, T upper_bound) {
-    return value >= lower_bound && value <= upper_bound;
+  return value >= lower_bound && value <= upper_bound;
 }
 
 // Template function declaration
 template <typename T>
-T get_parameter_within_bounds(const std::string& prompt, T lower_bound, T upper_bound);
+T get_parameter_within_bounds(const std::string& prompt, T lower_bound,
+                              T upper_bound);
 
 // Template specializations for get_parameter_within_bounds declarations
 template <>
-int get_parameter_within_bounds<int>(const std::string& prompt, int lower_bound, int upper_bound);
+int get_parameter_within_bounds<int>(const std::string& prompt, int lower_bound,
+                                     int upper_bound);
 
 template <>
-double get_parameter_within_bounds<double>(const std::string& prompt, double lower_bound, double upper_bound);
+double get_parameter_within_bounds<double>(const std::string& prompt,
+                                           double lower_bound,
+                                           double upper_bound);
 
 #endif  // CONSOLE_INTERFACE_H
