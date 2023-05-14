@@ -121,7 +121,7 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board, char player)
     }
     if (!best_child)
     {
-        throw std::runtime_error("Statistics are not enough to find the best child.");
+        throw std::runtime_error("Statistics are not sufficient to find the best child.");
     }
     else if (is_verbose)
     {
@@ -162,9 +162,9 @@ std::shared_ptr<Mcts_agent::Node > Mcts_agent::select_child(const std::shared_pt
     std::shared_ptr<Node> best_child = parent_node->child_nodes[0];
     double max_score = calculate_uct_score(best_child, parent_node);
     // Start loop from the second child
-    for (auto it = std::next(parent_node->child_nodes.begin()); it != parent_node->child_nodes.end(); ++it)
+    for (auto iterator = std::next(parent_node->child_nodes.begin()); iterator != parent_node->child_nodes.end(); ++iterator)
     {
-        const auto& child = *it;
+        const auto& child = *iterator;
         double uct_score = calculate_uct_score(child, parent_node);
 
         if (uct_score > max_score)
