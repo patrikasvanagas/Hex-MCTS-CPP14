@@ -90,7 +90,7 @@ double get_parameter_within_bounds<double>(const std::string& prompt, double low
 }
 
 void play_against_robot() {
-    int player_number = get_parameter_within_bounds("Enter '1' if you want to be Player 1 (Blue) or '2' if you want to be Player 2 (Red): ", 1, 2);
+    int human_number = get_parameter_within_bounds("Enter '1' if you want to be Player 1 (Blue) or '2' if you want to be Player 2 (Red): ", 1, 2);
     int board_size = get_parameter_within_bounds("Enter board size (between 2 and 11): ", 2, 11);
     int max_decision_time_ms = get_parameter_within_bounds("Enter max decision time for the robot in milliseconds (at least 100): ", 100, INT_MAX);
 
@@ -99,17 +99,14 @@ void play_against_robot() {
         exploration_constant = get_parameter_within_bounds("Enter exploration constant (between 0.1 and 2): ", 0.1, 2.0);
     }
     bool is_parallelized = (get_yes_or_no_response("Would you like to parallelize the agent? (y/n): ") == 'y');
-    bool is_verbose;
+    bool is_verbose = false;
     if (!is_parallelized) {
         bool is_verbose = (get_yes_or_no_response("Would you like to enable verbose mode? (y/n): ") == 'y');
-	}
-    else {
-		bool is_verbose = false;
 	}
     auto human_player = std::make_unique<Human_player>();
     auto mcts_agent_player = std::make_unique<Mcts_player>(exploration_constant, std::chrono::milliseconds(max_decision_time_ms), is_parallelized, is_verbose);
 
-    if (player_number == 1) {
+    if (human_number == 1) {
         Game game(board_size, std::move(human_player), std::move(mcts_agent_player));
         game.play();
     }
@@ -121,9 +118,7 @@ void play_against_robot() {
 
 
 void start_robot_arena() {
-    int board_size;
-    std::cout << "Enter board size (at least 2): ";
-    std::cin >> board_size;
+    int board_size = get_parameter_within_bounds("Enter board size (between 2 and 11): ", 2, 11);
 
     std::cout << "Enter parameters for MCTS Agent 1:\n";
     double exploration_constant1;
@@ -187,7 +182,7 @@ void print_welcome_ascii_art() {
 }
 
 void print_docs() {
-    std::cout << "DOCS TEXT HERE\n";
+    std::cout << "\Hex is a two-person, zero-sum perfect information game without chance. It has a rather cult following in the community.\n\n";
 }
 
 void print_exit_ascii_art() {
@@ -215,9 +210,9 @@ void run_console_interface() {
                 << "2) Robot arena\n"
                 << "3) Human arena\n"
                 << "4) Read the docs\n"
-                << "5) Exit\n"
-                << "Option: ";
-            std::cin >> option;
+                << "5) Exit\n";
+
+            option = get_parameter_within_bounds("Option: ", 1, 5);
             std::cout << "\n";
 
             switch (option) {
@@ -237,7 +232,6 @@ void run_console_interface() {
                 is_running = false;
                 break;
             default:
-                std::cout << "Invalid option. Please try again.\n";
                 break;
             }
         }
