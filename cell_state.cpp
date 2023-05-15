@@ -1,6 +1,7 @@
 #include "cell_state.h"
 
-std::ostream& operator<<(std::ostream& os, const Cell_state& state) {
+std::ostream& operator<<(std::ostream& os, const Cell_state& state) 
+{
   switch (state) {
     case Cell_state::Empty:
       os << '.';

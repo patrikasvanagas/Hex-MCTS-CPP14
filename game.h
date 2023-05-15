@@ -7,7 +7,8 @@
 #include "cell_state.h"
 #include "player.h"
 
-class Game {
+class Game 
+{
  public:
   Game(int board_size, std::unique_ptr<Player> player_1,
        std::unique_ptr<Player> player_2);

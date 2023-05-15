@@ -8,7 +8,8 @@
 
 #include "cell_state.h"
 
-class Board {
+class Board 
+{
  public:
   Board(int size);
   void display_board() const;

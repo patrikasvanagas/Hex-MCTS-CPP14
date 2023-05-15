@@ -9,7 +9,8 @@
 
 #include "board.h"
 
-class Mcts_agent {
+class Mcts_agent 
+{
  public:
   Mcts_agent(double exploration_factor,
              std::chrono::milliseconds max_decision_time, bool is_parallelized,

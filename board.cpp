@@ -11,13 +11,15 @@
 
 Board::Board(int size)
     : board_size(size),
-      board(size, std::vector<Cell_state>(size, Cell_state::Empty)) {
+      board(size, std::vector<Cell_state>(size, Cell_state::Empty)) 
+{
   if (size < 2) {
     throw std::invalid_argument("Board size cannot be less than 2.");
   }
 }
 
-void Board::display_board() const {
+void Board::display_board() const 
+{
   std::cout << "\n";
   for (size_t row = 0; row < board_size; ++row) {
     std::cout << std::string(2 * row, ' ');
@@ -47,22 +49,26 @@ void Board::display_board() const {
   std::cout << "\n\n";
 }
 
-std::ostream& operator<<(std::ostream& os, const Board& board) {
+std::ostream& operator<<(std::ostream& os, const Board& board) 
+{
   board.display_board();
   return os;
 }
 
-bool Board::is_within_bounds(int move_x, int move_y) const {
+bool Board::is_within_bounds(int move_x, int move_y) const 
+{
   return move_x >= 0 && move_x < board_size && move_y >= 0 &&
          move_y < board_size;
 }
 
-bool Board::is_valid_move(int move_x, int move_y) const {
+bool Board::is_valid_move(int move_x, int move_y) const 
+{
   return is_within_bounds(move_x, move_y) &&
          (board[move_x][move_y] == Cell_state::Empty);
 }
 
-void Board::make_move(int move_x, int move_y, Cell_state player) {
+void Board::make_move(int move_x, int move_y, Cell_state player) 
+{
   if (!is_valid_move(move_x, move_y)) {
     throw std::invalid_argument("Invalid move attempt at position (" +
                                 std::to_string(move_x) + ", " +
@@ -71,12 +77,16 @@ void Board::make_move(int move_x, int move_y, Cell_state player) {
   board[move_x][move_y] = player;
 }
 
-int Board::get_board_size() const { return board_size; }
+int Board::get_board_size() const 
+{ 
+    return board_size; 
+}
 
 bool Board::depth_first_search(
     int start_x, int start_y, int destination_x, int destination_y,
     Cell_state player_symbol,
-    std::vector<std::vector<Cell_state>>& game_board_snapshot) const {
+    std::vector<std::vector<Cell_state>>& game_board_snapshot) const 
+{
   if (start_x == destination_x && start_y == destination_y) return true;
   game_board_snapshot[start_x][start_y] = Cell_state::Empty;
   for (int i = 0; i < neighbour_offset_x.size(); ++i) {
@@ -94,7 +104,8 @@ bool Board::depth_first_search(
   return false;
 }
 
-Cell_state Board::check_winner() const {
+Cell_state Board::check_winner() const 
+{
   // Check for player B (top to bottom)
   for (int top_row_index = 0; top_row_index < board_size; ++top_row_index) {
     if (board[0][top_row_index] == Cell_state::Blue) {
@@ -128,7 +139,8 @@ Cell_state Board::check_winner() const {
   return Cell_state::Empty;
 }
 
-std::vector<std::pair<int, int>> Board::get_valid_moves() const {
+std::vector<std::pair<int, int>> Board::get_valid_moves() const 
+{
   std::vector<std::pair<int, int>> valid_moves;
   for (int row = 0; row < board_size; ++row) {
     for (int col = 0; col < board_size; ++col) {
@@ -140,10 +152,10 @@ std::vector<std::pair<int, int>> Board::get_valid_moves() const {
   return valid_moves;
 }
 
-// THE FOLLOWING METHOD IS KEPT ONLY FOR DEBUGGING THE BOARD. THEY ARE NOT
-// USED IN THE GAME.
+// Kept only for debugging and not used in the game
 bool Board::are_cells_connected(int first_cell_x, int first_cell_y,
-                                int second_cell_x, int second_cell_y) const {
+                                int second_cell_x, int second_cell_y) const 
+{
   for (int i = 0; i < neighbour_offset_x.size(); ++i) {
     int neighbour_cell_x = first_cell_x + neighbour_offset_x[i];
     int neighbour_cell_y = first_cell_y + neighbour_offset_y[i];
@@ -155,6 +167,3 @@ bool Board::are_cells_connected(int first_cell_x, int first_cell_y,
   }
   return false;
 }
-
-
-

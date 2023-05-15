@@ -6,7 +6,8 @@
 #include "mcts_agent.h"
 
 std::pair<int, int> Human_player::choose_move(const Board& board,
-                                              Cell_state player) {
+                                              Cell_state player) 
+{
   int move_row;
   char move_col_symbol;
   bool valid_move = false;
@@ -46,11 +47,19 @@ Mcts_player::Mcts_player(double exploration_factor,
     : exploration_factor(exploration_factor),
       max_decision_time(max_decision_time),
       is_parallelized(is_parallelized),
-      is_verbose(is_verbose) {}
+      is_verbose(is_verbose) 
+{
+}
 
 std::pair<int, int> Mcts_player::choose_move(const Board& board,
-                                             Cell_state player) {
+                                             Cell_state player) 
+{
   Mcts_agent agent(exploration_factor, max_decision_time, is_parallelized,
                    is_verbose);
   return agent.choose_move(board, player);
+}
+
+bool Mcts_player::get_is_verbose() const 
+{ 
+    return is_verbose; 
 }

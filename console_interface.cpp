@@ -1,14 +1,19 @@
 #include "console_interface.h"
 
+#include <chrono>
+#include <thread>
+
 #include "board.h"
 
-bool is_integer(const std::string& s) {
+bool is_integer(const std::string& s) 
+{
   std::string::const_iterator it = s.begin();
   while (it != s.end() && std::isdigit(*it)) ++it;
   return !s.empty() && it == s.end();
 }
 
-char get_yes_or_no_response(const std::string& prompt) {
+char get_yes_or_no_response(const std::string& prompt) 
+{
   char response;
   while (true) {
     std::cout << prompt;
@@ -92,11 +97,12 @@ double get_parameter_within_bounds<double>(const std::string& prompt,
 }
 
 std::unique_ptr<Mcts_player> create_mcts_agent(
-    const std::string& agent_prompt) {
+    const std::string& agent_prompt) 
+{
   std::cout << "\nInitializing " << agent_prompt << ":\n";
 
   int max_decision_time_ms = get_parameter_within_bounds(
-      "Enter max decision time in milliseconds (at least 100): ", 100, INT_MAX);
+      "Enter max decision time in milliseconds (at least 300): ", 300, INT_MAX);
 
   double exploration_constant = 1.41;
   if (get_yes_or_no_response("Would you like to change the default exploration "
@@ -120,7 +126,18 @@ std::unique_ptr<Mcts_player> create_mcts_agent(
       is_parallelized, is_verbose);
 }
 
-void start_match_against_robot() {
+void countdown(int seconds) 
+{
+  while (seconds > 0) {
+    std::cout << "The agent will start thinking loudly in " << seconds
+              << " ...\n";
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    --seconds;
+  }
+}
+
+void start_match_against_robot() 
+{
   int human_player_number = get_parameter_within_bounds(
       "Enter '1' if you want to be Player 1 (Blue, Vertical) or '2' if you "
       "want to be "
@@ -136,12 +153,16 @@ void start_match_against_robot() {
     Game game(board_size, std::move(human_player), std::move(mcts_agent));
     game.play();
   } else {
+    if (mcts_agent->get_is_verbose()) {
+      countdown(3);
+    }
     Game game(board_size, std::move(mcts_agent), std::move(human_player));
     game.play();
   }
 }
 
-void start_robot_arena() {
+void start_robot_arena() 
+{
   int board_size = get_parameter_within_bounds(
       "Enter board size (between 2 and 11): ", 2, 11);
 
@@ -152,7 +173,8 @@ void start_robot_arena() {
   game.play();
 }
 
-void start_human_arena() {
+void start_human_arena() 
+{
   int board_size = get_parameter_within_bounds(
       "Enter board size (between 2 and 11): ", 2, 11);
   auto human_player_1 = std::make_unique<Human_player>();
@@ -161,7 +183,8 @@ void start_human_arena() {
   game.play();
 }
 
-void print_welcome_ascii_art() {
+void print_welcome_ascii_art() 
+{
   std::cout << R"(
 
     )            )           *                       (     
@@ -176,39 +199,42 @@ void print_welcome_ascii_art() {
 )" << '\n';
 }
 
-void print_board_and_winner(Board& board) {
+void print_board_and_winner(Board& board) 
+{
   board.display_board();
   Cell_state winner = board.check_winner();
   std::cout << "Winner: " << winner << std::endl;
   std::cout << "------------------" << std::endl;
 }
 
-void display_winning_condition() {
-  // Test case 1: 3x3 board, player Cell_state::Blue wins
-  Board board_3(3);
-  board_3.make_move(0, 2, Cell_state::Blue);
-  board_3.make_move(1, 1, Cell_state::Blue);
-  board_3.make_move(2, 1, Cell_state::Blue);
-  print_board_and_winner(board_3);
+void display_winning_condition() 
+{
+  // Demo case 1: 3x3 board, player Cell_state::Blue wins
+  Board board_1(3);
+  board_1.make_move(0, 2, Cell_state::Blue);
+  board_1.make_move(1, 1, Cell_state::Blue);
+  board_1.make_move(2, 1, Cell_state::Blue);
+  print_board_and_winner(board_1);
 
-  // Test case 2: 3x3 board, player Cell_state::Red wins
-  Board board_4(3);
-  board_4.make_move(1, 0, Cell_state::Red);
-  board_4.make_move(1, 1, Cell_state::Red);
-  board_4.make_move(0, 2, Cell_state::Red);
-  print_board_and_winner(board_4);
+  // Demo case 2: 3x3 board, player Cell_state::Red wins
+  Board board_2(3);
+  board_2.make_move(1, 0, Cell_state::Red);
+  board_2.make_move(1, 1, Cell_state::Red);
+  board_2.make_move(0, 2, Cell_state::Red);
+  print_board_and_winner(board_2);
 
-  // Test case 2: 3x3 board, player Cell_state::Red wins
-  Board board6(5);
-  board6.make_move(3, 0, Cell_state::Red);
-  board6.make_move(3, 1, Cell_state::Red);
-  board6.make_move(2, 2, Cell_state::Red);
-  board6.make_move(1, 3, Cell_state::Red);
-  board6.make_move(1, 4, Cell_state::Red);
-  print_board_and_winner(board6);
+  // Demo case 2: 3x3 board, player Cell_state::Red wins
+  Board board3(5);
+  board3.make_move(3, 0, Cell_state::Red);
+  board3.make_move(3, 1, Cell_state::Red);
+  board3.make_move(2, 2, Cell_state::Red);
+  board3.make_move(1, 3, Cell_state::Red);
+  board3.make_move(1, 4, Cell_state::Red);
+  print_board_and_winner(board3);
 }
 
-void print_docs() {
+void print_docs() 
+{
   std::cout << R"(
 Hex is a two-player, zero-sum, perfect information game invented by the Danish mathematician Piet Hein and independently by the American mathematician John Nash. As it is a deterministic strategy game, chance plays no part in Hex, and unlike in chess or checkers, there are no 'draw' outcomes in Hex - there is always a winner and a loser.
 
@@ -223,14 +249,14 @@ In this console implementation, the connections between the cells are displayed 
 
   display_winning_condition();
 
-std::cout << R"(
+  std::cout << R"(
 The robots in this implementation are powered by a AI agent using a powerful strategy known as Monte Carlo Tree Search (MCTS). The MCTS is a heuristic search algorithm known for its effectiveness in decision-making problems, particularly in games like Hex.
 
 This implementation of MCTS consists of four main phases:
 
-1. Expansion: From the root node (representing the current game state), child nodes are detected by detecting the moves allowed by the game state.
+1. Expansion: From the root node (representing the current game state), child nodes are found by detecting the moves allowed by the game state.
 
-2. Selection: A child with the most promising score of Upper Confidence Bound applied to Trees (UCT) is selected for a random playout from it.
+2. Selection: A child with the most promising score of Upper Confidence Bound applied to Trees (UCT) is selected for a random playout.
 
 3. Simulation: A simulation is run from the child according to the default policy; in this case, a random game is played out.
 
@@ -246,24 +272,23 @@ Author: Patrikas Vanagas, 2023
 )" << std::endl;
 }
 
-
 // zoom out.
-void print_exit_ascii_art() {
+void print_exit_ascii_art() 
+{
   std::cout << R"(
 
-  .___  ___.      ___   ____    ____    .___________. __    __   _______         ___       __     .______    _______    ____    __    ____  __  .___________. __    __     ____    ____  ______    __    __  
-  |   \/   |     /   \  \   \  /   /    |           ||  |  |  | |   ____|       /   \     |  |    |   _  \  |   ____|   \   \  /  \  /   / |  | |           ||  |  |  |    \   \  /   / /  __  \  |  |  |  | 
-  |  \  /  |    /  ^  \  \   \/   /     `---|  |----`|  |__|  | |  |__         /  ^  \    |  |    |  |_)  | |  |__       \   \/    \/   /  |  | `---|  |----`|  |__|  |     \   \/   / |  |  |  | |  |  |  | 
-  |  |\/|  |   /  /_\  \  \_    _/          |  |     |   __   | |   __|       /  /_\  \   |  |    |   _  <  |   __|       \            /   |  |     |  |     |   __   |      \_    _/  |  |  |  | |  |  |  | 
-  |  |  |  |  /  _____  \   |  |            |  |     |  |  |  | |  |____     /  _____  \  |  |    |  |_)  | |  |____       \    /\    /    |  |     |  |     |  |  |  |        |  |    |  `--'  | |  `--'  | 
-  |__|  |__| /__/     \__\  |__|            |__|     |__|  |__| |_______|   /__/     \__\ |__|    |______/  |_______|       \__/  \__/     |__|     |__|     |__|  |__|        |__|     \______/   \______/  
-                                                                                                                                                                                                             
+    __  ___               __  __            ___    ____   __                     _ __  __                        
+   /  |/  /___ ___  __   / /_/ /_  ___     /   |  /  _/  / /_  ___     _      __(_) /_/ /_     __  ______  __  __
+  / /|_/ / __ `/ / / /  / __/ __ \/ _ \   / /| |  / /   / __ \/ _ \   | | /| / / / __/ __ \   / / / / __ \/ / / /
+ / /  / / /_/ / /_/ /  / /_/ / / /  __/  / ___ |_/ /   / /_/ /  __/   | |/ |/ / / /_/ / / /  / /_/ / /_/ / /_/ / 
+/_/  /_/\__,_/\__, /   \__/_/ /_/\___/  /_/  |_/___/  /_.___/\___/    |__/|__/_/\__/_/ /_/   \__, /\____/\__,_/  
+             /____/                                                                         /____/               
 
-     
 )" << '\n';
 }
 
-void run_console_interface() {
+void run_console_interface() 
+{
   print_welcome_ascii_art();
   std::cout << "Welcome.\n";
 

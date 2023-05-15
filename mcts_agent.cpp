@@ -17,7 +17,8 @@ Mcts_agent::Mcts_agent(double exploration_factor,
     : exploration_factor(exploration_factor),
       max_decision_time(max_decision_time),
       is_verbose(is_verbose),
-      random_generator(random_device()) {
+      random_generator(random_device()) 
+{
   if (is_parallelized && is_verbose) {
     throw std::logic_error(
         "Concurrent playouts and verbose mode do not make sense together.");
@@ -31,10 +32,13 @@ Mcts_agent::Node::Node(Cell_state player, std::pair<int, int> move,
       move(move),
       player(player),
       child_nodes(),
-      parent_node(parent_node) {}
+      parent_node(parent_node) 
+{
+}
 
 std::pair<int, int> Mcts_agent::choose_move(const Board& board,
-                                            Cell_state player) {
+                                            Cell_state player) 
+{
   if (is_verbose) {
     std::cout << "\n-------------MCTS VERBOSE START - " << player
               << " to move-------------\n"
@@ -148,7 +152,8 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
 }
 
 void Mcts_agent::expand_node(const std::shared_ptr<Node>& node,
-                             const Board& board) {
+                             const Board& board) 
+{
   std::vector<std::pair<int, int>> valid_moves = board.get_valid_moves();
   for (const auto& move : valid_moves) {
     std::shared_ptr<Node> new_child =
@@ -163,7 +168,8 @@ void Mcts_agent::expand_node(const std::shared_ptr<Node>& node,
 
 double Mcts_agent::calculate_uct_score(
     const std::shared_ptr<Node>& child_node,
-    const std::shared_ptr<Node>& parent_node) {
+    const std::shared_ptr<Node>& parent_node) 
+{
   if (child_node->visit_count == 0) {
     return std::numeric_limits<double>::max();
   } else {
@@ -175,7 +181,8 @@ double Mcts_agent::calculate_uct_score(
 }
 
 std::shared_ptr<Mcts_agent::Node> Mcts_agent::select_child(
-    const std::shared_ptr<Node>& parent_node) {
+    const std::shared_ptr<Node>& parent_node) 
+{
   // Initialize best_child as the first child and calculate its UCT score
   std::shared_ptr<Node> best_child = parent_node->child_nodes[0];
   double max_score = calculate_uct_score(best_child, parent_node);
@@ -204,7 +211,8 @@ std::shared_ptr<Mcts_agent::Node> Mcts_agent::select_child(
 }
 
 Cell_state Mcts_agent::simulate_random_playout(
-    const std::shared_ptr<Node>& node, Board board) {
+    const std::shared_ptr<Node>& node, Board board) 
+{
   Cell_state current_player = node->player;
   board.make_move(node->move.first, node->move.second, current_player);
   if (is_verbose) {
@@ -247,7 +255,8 @@ Cell_state Mcts_agent::simulate_random_playout(
 
 // in the current implementation traverses the tree chosen child
 // to its root (1 level), but is suitable for traversing the whole tree.
-void Mcts_agent::backpropagate(std::shared_ptr<Node>& node, Cell_state winner) {
+void Mcts_agent::backpropagate(std::shared_ptr<Node>& node, Cell_state winner) 
+{
   std::shared_ptr<Node> current_node = node;
   while (current_node != nullptr) {
     std::lock_guard<std::mutex> lock(

@@ -20,7 +20,8 @@ void run_console_interface();
 
 // Template function for checking if value is within bounds
 template <typename T>
-bool is_in_bounds(T value, T lower_bound, T upper_bound) {
+bool is_in_bounds(T value, T lower_bound, T upper_bound) 
+{
   return value >= lower_bound && value <= upper_bound;
 }
 
