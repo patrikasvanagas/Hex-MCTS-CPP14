@@ -1,17 +1,3 @@
-/**
- * @file cell_state.h
- * @brief This file defines the Cell_state enum and an overload of the stream
- * insertion operator for it. It is also used in the board and MCTS operations,
- * e.g. detecting the winner of a game.
- * 
- * The Cell_state enum represents the possible states of a cell in a game of Hex.
- *  Each cell can either be empty or contain a move by the "Blue" or "Red" player.
- * This is also
- *
- * The stream insertion operator overload allows instances of Cell_state to be
- * directly inserted into an output stream.
- */
-
 #ifndef CELL_STATE_H
 #define CELL_STATE_H
 
@@ -28,7 +14,6 @@
  * players. It is also used in the board and MCTS operations, e.g. detecting
  * the winer of the game.
  */
-
 enum class Cell_state 
 {
 	Empty, Blue, Red 
@@ -45,7 +30,6 @@ enum class Cell_state
  * @param state The state to be inserted into the stream.
  * @return A reference to the output stream.
  */
-
 std::ostream& operator<<(std::ostream& os, const Cell_state& state);
 
 #endif  // CELL_STATE_H
