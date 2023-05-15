@@ -167,7 +167,6 @@ void Board::make_move(int move_x, int move_y, Cell_state player)
  *
  * @return The size of the board.
  */
-int Board::get_board_size() const { return board_size; }
 int Board::get_board_size() const 
 { 
     return board_size; 
