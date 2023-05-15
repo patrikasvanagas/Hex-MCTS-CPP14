@@ -22,7 +22,6 @@ class Board {
  private:
   int board_size;
   std::vector<std::vector<Cell_state>> board;
-  // can make static for debugging
   std::array<int, 6> neighbour_offset_x = {-1, -1, 0, 1, 1, 0};
   std::array<int, 6> neighbour_offset_y = {0, 1, 1, 0, -1, -1};
   bool is_within_bounds(int move_x, int move_y) const;
@@ -30,12 +29,9 @@ class Board {
       int start_x, int start_y, int destination_x, int destination_y,
       Cell_state player_symbol,
       std::vector<std::vector<Cell_state>>& game_board_snapshot) const;
-  // the following methods are kept only for testing purposes. Make them public
-  // if you want to test the board in the main.
+  // Kept for debugging
   bool are_cells_connected(int first_cell_x, int first_cell_y,
                            int second_cell_x, int second_cell_y) const;
-  void print_board_and_winner(Board& board);
-  void test_winning_condition();
 };
 
 #endif

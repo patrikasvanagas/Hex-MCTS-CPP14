@@ -140,7 +140,7 @@ std::vector<std::pair<int, int>> Board::get_valid_moves() const {
   return valid_moves;
 }
 
-// THE FOLLOWING METHODS ARE KEPT ONLY FOR DEBUGGING THE BOARD. THEY ARE NOT
+// THE FOLLOWING METHOD IS KEPT ONLY FOR DEBUGGING THE BOARD. THEY ARE NOT
 // USED IN THE GAME.
 bool Board::are_cells_connected(int first_cell_x, int first_cell_y,
                                 int second_cell_x, int second_cell_y) const {
@@ -156,55 +156,5 @@ bool Board::are_cells_connected(int first_cell_x, int first_cell_y,
   return false;
 }
 
-void Board::print_board_and_winner(Board& board) {
-  board.display_board();
-  Cell_state winner = board.check_winner();
-  std::cout << "Winner: " << winner << std::endl;
-  std::cout << "------------------" << std::endl;
-}
 
-void Board::test_winning_condition() {
-  // Test case 1: 3x3 board, player Cell_state::Blue wins
-  Board board1(3);
-  board1.make_move(0, 0, Cell_state::Blue);
-  board1.make_move(1, 0, Cell_state::Blue);
-  board1.make_move(2, 0, Cell_state::Blue);
-  print_board_and_winner(board1);
 
-  // Test case 2: 3x3 board, player Cell_state::Red wins
-  Board board2(3);
-  board2.make_move(0, 0, Cell_state::Red);
-  board2.make_move(0, 1, Cell_state::Red);
-  board2.make_move(0, 2, Cell_state::Red);
-  print_board_and_winner(board2);
-
-  // Test case 3: 3x3 board, player Cell_state::Blue wins
-  Board board3(3);
-  board3.make_move(0, 2, Cell_state::Blue);
-  board3.make_move(1, 1, Cell_state::Blue);
-  board3.make_move(2, 1, Cell_state::Blue);
-  print_board_and_winner(board3);
-
-  // Test case 4: 3x3 board, player Cell_state::Red wins
-  Board board4(3);
-  board4.make_move(1, 0, Cell_state::Red);
-  board4.make_move(1, 1, Cell_state::Red);
-  board4.make_move(0, 2, Cell_state::Red);
-  print_board_and_winner(board4);
-
-  // Test case 5: 3x3 board, no winner
-  Board board5(3);
-  board5.make_move(0, 0, Cell_state::Blue);
-  board5.make_move(1, 1, Cell_state::Blue);
-  board5.make_move(2, 0, Cell_state::Blue);
-  print_board_and_winner(board5);
-
-  Board board6(5);
-  board6.make_move(3, 0, Cell_state::Red);
-  board6.make_move(3, 1, Cell_state::Red);
-  board6.make_move(2, 2, Cell_state::Red);
-  board6.make_move(1, 2, Cell_state::Red);
-  board6.make_move(1, 3, Cell_state::Red);
-  board6.make_move(1, 4, Cell_state::Red);
-  print_board_and_winner(board6);
-}

@@ -1,5 +1,7 @@
 #include "console_interface.h"
 
+#include "board.h"
+
 bool is_integer(const std::string& s) {
   std::string::const_iterator it = s.begin();
   while (it != s.end() && std::isdigit(*it)) ++it;
@@ -174,11 +176,76 @@ void print_welcome_ascii_art() {
 )" << '\n';
 }
 
-void print_docs() {
-  std::cout
-      << "\Hex is a two-person, zero-sum perfect information game without "
-         "chance. It has a rather cult following in the community.\n\n";
+void print_board_and_winner(Board& board) {
+  board.display_board();
+  Cell_state winner = board.check_winner();
+  std::cout << "Winner: " << winner << std::endl;
+  std::cout << "------------------" << std::endl;
 }
+
+void display_winning_condition() {
+  // Test case 1: 3x3 board, player Cell_state::Blue wins
+  Board board_3(3);
+  board_3.make_move(0, 2, Cell_state::Blue);
+  board_3.make_move(1, 1, Cell_state::Blue);
+  board_3.make_move(2, 1, Cell_state::Blue);
+  print_board_and_winner(board_3);
+
+  // Test case 2: 3x3 board, player Cell_state::Red wins
+  Board board_4(3);
+  board_4.make_move(1, 0, Cell_state::Red);
+  board_4.make_move(1, 1, Cell_state::Red);
+  board_4.make_move(0, 2, Cell_state::Red);
+  print_board_and_winner(board_4);
+
+  // Test case 2: 3x3 board, player Cell_state::Red wins
+  Board board6(5);
+  board6.make_move(3, 0, Cell_state::Red);
+  board6.make_move(3, 1, Cell_state::Red);
+  board6.make_move(2, 2, Cell_state::Red);
+  board6.make_move(1, 3, Cell_state::Red);
+  board6.make_move(1, 4, Cell_state::Red);
+  print_board_and_winner(board6);
+}
+
+void print_docs() {
+  std::cout << R"(
+Hex is a two-player, zero-sum, perfect information game invented by the Danish mathematician Piet Hein and independently by the American mathematician John Nash. As it is a deterministic strategy game, chance plays no part in Hex, and unlike in chess or checkers, there are no 'draw' outcomes in Hex - there is always a winner and a loser.
+
+The game is played on a rhombus-shaped board divided into hexagonal cells. The standard game board sizes are 11x11 or 13x13, but the size can be any square board from 1x1 up to 19x19 for tournament rules.
+
+Each player is assigned a pair of opposite sides of the board, and the goal of each player is to form a connected path of their own stones linking their two sides. Usually, the blue player goes first and tries to create a vertical path, while the red player goes second and tries to create horizontal path. The player who completes their path first is the winner. The game does not allow for ties, and, given perfect play by both players, the first player can always win.
+
+The game requires strategic depth as players must balance between extending their own path and blocking their opponent. Although the rules are straightforward, the strategic complexity becomes apparent as you gain experience.
+
+In this console implementation, the connections between the cells are displayed by hyphens and slashes. Let's look at how the board is displayed and some sample winning conditions:
+)" << std::endl;
+
+  display_winning_condition();
+
+std::cout << R"(
+The robots in this implementation are powered by a AI agent using a powerful strategy known as Monte Carlo Tree Search (MCTS). The MCTS is a heuristic search algorithm known for its effectiveness in decision-making problems, particularly in games like Hex.
+
+This implementation of MCTS consists of four main phases:
+
+1. Expansion: From the root node (representing the current game state), child nodes are detected by detecting the moves allowed by the game state.
+
+2. Selection: A child with the most promising score of Upper Confidence Bound applied to Trees (UCT) is selected for a random playout from it.
+
+3. Simulation: A simulation is run from the child according to the default policy; in this case, a random game is played out.
+
+4. Backpropagation: The result of the simulation is backpropagated through the tree. The parent and the chosen child node have their visit count incremented and their value updated.
+
+This process is repeated until the computational budget (based on time or number of iterations) is exhausted. The agent then selects the move that leads to the most promising child node.
+
+In this implementation, the MCTS agent also supports parallel simulations by running multiple threads, each executing an MCTS iteration. The non-parallelised agent can run in verbose mode, outputting detailed information about each MCTS iteration, which can be a valuable tool for understanding the decision-making process of the AI.
+
+It should be noted that while MCTS does incorporate randomness (through the simulation phase), it is not a purely random algorithm. It uses the results of previous iterations to make informed decisions, and over time it builds a more accurate representation of the search space.
+
+Author: Patrikas Vanagas, 2023
+)" << std::endl;
+}
+
 
 // zoom out.
 void print_exit_ascii_art() {
@@ -198,7 +265,7 @@ void print_exit_ascii_art() {
 
 void run_console_interface() {
   print_welcome_ascii_art();
-  std::cout << "Welcome, Human.\n";
+  std::cout << "Welcome.\n";
 
   bool is_running = true;
   while (is_running) {
