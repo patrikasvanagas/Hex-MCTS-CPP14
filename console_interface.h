@@ -10,8 +10,8 @@
 
 char get_yes_or_no_response();
 bool is_integer(const std::string& s);
-void play_against_robot();
-void print_welcome_ascii_art();
+std::unique_ptr<Mcts_player> create_mcts_agent(const std::string& agent_prompt);
+void start_match_against_robot();
 void start_robot_arena();
 void start_human_arena();
 void print_docs();

@@ -89,16 +89,12 @@ double get_parameter_within_bounds<double>(const std::string& prompt,
   return value;
 }
 
-void play_against_robot() {
-  int human_number = get_parameter_within_bounds(
-      "Enter '1' if you want to be Player 1 (Blue) or '2' if you want to be "
-      "Player 2 (Red): ",
-      1, 2);
-  int board_size = get_parameter_within_bounds(
-      "Enter board size (between 2 and 11): ", 2, 11);
+std::unique_ptr<Mcts_player> create_mcts_agent(
+    const std::string& agent_prompt) {
+  std::cout << "Initializing " << agent_prompt << ":\n";
+
   int max_decision_time_ms = get_parameter_within_bounds(
-      "Enter max decision time for the robot in milliseconds (at least 100): ",
-      100, INT_MAX);
+      "Enter max decision time in milliseconds (at least 100): ", 100, INT_MAX);
 
   double exploration_constant = 1.41;
   if (get_yes_or_no_response("Would you like to change the default exploration "
@@ -106,26 +102,39 @@ void play_against_robot() {
     exploration_constant = get_parameter_within_bounds(
         "Enter exploration constant (between 0.1 and 2): ", 0.1, 2.0);
   }
+
   bool is_parallelized =
       (get_yes_or_no_response(
            "Would you like to parallelize the agent? (y/n): ") == 'y');
+
   bool is_verbose = false;
   if (!is_parallelized) {
     is_verbose = (get_yes_or_no_response(
                       "Would you like to enable verbose mode? (y/n): ") == 'y');
   }
-  auto human_player = std::make_unique<Human_player>();
-  auto mcts_agent_player = std::make_unique<Mcts_player>(
+
+  return std::make_unique<Mcts_player>(
       exploration_constant, std::chrono::milliseconds(max_decision_time_ms),
       is_parallelized, is_verbose);
+}
 
-  if (human_number == 1) {
-    Game game(board_size, std::move(human_player),
-              std::move(mcts_agent_player));
+void start_match_against_robot() {
+  int human_player_number = get_parameter_within_bounds(
+      "Enter '1' if you want to be Player 1 (Blue, Vertical) or '2' if you "
+      "want to be "
+      "Player 2 (Red, Horizontal): ",
+      1, 2);
+  int board_size = get_parameter_within_bounds(
+      "Enter board size (between 2 and 11): ", 2, 11);
+
+  auto mcts_agent = create_mcts_agent("agent");
+  auto human_player = std::make_unique<Human_player>();
+
+  if (human_player_number == 1) {
+    Game game(board_size, std::move(human_player), std::move(mcts_agent));
     game.play();
   } else {
-    Game game(board_size, std::move(mcts_agent_player),
-              std::move(human_player));
+    Game game(board_size, std::move(mcts_agent), std::move(human_player));
     game.play();
   }
 }
@@ -134,56 +143,20 @@ void start_robot_arena() {
   int board_size = get_parameter_within_bounds(
       "Enter board size (between 2 and 11): ", 2, 11);
 
-  std::cout << "Enter parameters for MCTS Agent 1:\n";
-  double exploration_constant1;
-  std::cout
-      << "Enter exploration constant (between 0.5 and 2, recommended 1.4): ";
-  std::cin >> exploration_constant1;
+  auto mcts_agent_1 = create_mcts_agent("first agent");
+  auto mcts_agent_2 = create_mcts_agent("second agent");
 
-  int decision_time1;
-  std::cout << "Enter maximum decision time in milliseconds (at least 100): ";
-  std::cin >> decision_time1;
-
-  bool is_parallelized1;
-  std::cout << "Enter 1 for parallelized mode, 0 for not parallelized: ";
-  std::cin >> is_parallelized1;
-
-  bool is_verbose1;
-  std::cout << "Enter 1 for verbose mode, 0 for not verbose: ";
-  std::cin >> is_verbose1;
-
-  std::cout << "Enter parameters for MCTS Agent 2:\n";
-  double exploration_constant2;
-  std::cout
-      << "Enter exploration constant (between 0.5 and 2, recommended 1.4): ";
-  std::cin >> exploration_constant2;
-
-  int decision_time2;
-  std::cout << "Enter maximum decision time in milliseconds (at least 100): ";
-  std::cin >> decision_time2;
-
-  bool is_parallelized2;
-  std::cout << "Enter 1 for parallelized mode, 0 for not parallelized: ";
-  std::cin >> is_parallelized2;
-
-  bool is_verbose2;
-  std::cout << "Enter 1 for verbose mode, 0 for not verbose: ";
-  std::cin >> is_verbose2;
-
-  auto mcts_agent_player1 = std::make_unique<Mcts_player>(
-      exploration_constant1, std::chrono::milliseconds(decision_time1),
-      is_parallelized1, is_verbose1);
-  auto mcts_agent_player2 = std::make_unique<Mcts_player>(
-      exploration_constant2, std::chrono::milliseconds(decision_time2),
-      is_parallelized2, is_verbose2);
-
-  Game game(board_size, std::move(mcts_agent_player1),
-            std::move(mcts_agent_player2));
+  Game game(board_size, std::move(mcts_agent_1), std::move(mcts_agent_2));
   game.play();
 }
 
 void start_human_arena() {
-  // TODO: Get input parameters and start human arena game
+  int board_size = get_parameter_within_bounds(
+      "Enter board size (between 2 and 11): ", 2, 11);
+  auto human_player_1 = std::make_unique<Human_player>();
+  auto human_player_2 = std::make_unique<Human_player>();
+  Game game(board_size, std::move(human_player_1), std::move(human_player_2));
+  game.play();
 }
 
 void print_welcome_ascii_art() {
@@ -238,7 +211,7 @@ void run_console_interface() {
 
       switch (option) {
         case 1:
-          play_against_robot();
+          start_match_against_robot();
           break;
         case 2:
           start_robot_arena();
