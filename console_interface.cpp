@@ -102,7 +102,7 @@ std::unique_ptr<Mcts_player> create_mcts_agent(
   std::cout << "\nInitializing " << agent_prompt << ":\n";
 
   int max_decision_time_ms = get_parameter_within_bounds(
-      "Enter max decision time in milliseconds (at least 300): ", 300, INT_MAX);
+      "Enter max decision time in milliseconds (at least 2000): ", 2000, INT_MAX);
 
   double exploration_constant = 1.41;
   if (get_yes_or_no_response("Would you like to change the default exploration "
@@ -238,7 +238,7 @@ void print_docs()
   std::cout << R"(
 Hex is a two-player, zero-sum, perfect information game invented by the Danish mathematician Piet Hein and independently by the American mathematician John Nash. As it is a deterministic strategy game, chance plays no part in Hex, and unlike in chess or checkers, there are no 'draw' outcomes in Hex - there is always a winner and a loser.
 
-The game is played on a rhombus-shaped board divided into hexagonal cells. The standard game board sizes are 11x11 or 13x13, but the size can be any square board from 1x1 up to 19x19 for tournament rules.
+The game is played on a rhombus-shaped board divided into hexagonal cells. The standard game board sizes are 11x11 or 13x13, but the size can be any square board from 2x2 up to 19x19 for tournament rules.
 
 Each player is assigned a pair of opposite sides of the board, and the goal of each player is to form a connected path of their own stones linking their two sides. Usually, the blue player goes first and tries to create a vertical path, while the red player goes second and tries to create horizontal path. The player who completes their path first is the winner. The game does not allow for ties, and, given perfect play by both players, the first player can always win.
 
@@ -262,11 +262,13 @@ This implementation of MCTS consists of four main phases:
 
 4. Backpropagation: The result of the simulation is backpropagated through the tree. The parent and the chosen child node have their visit count incremented and their value updated.
 
-This process is repeated until the computational budget (based on time or number of iterations) is exhausted. The agent then selects the move that leads to the most promising child node.
+This process is repeated until the computational budget (based on time) is exhausted. The agent then selects the move that leads to the most promising child node.
 
 In this implementation, the MCTS agent also supports parallel simulations by running multiple threads, each executing an MCTS iteration. The non-parallelised agent can run in verbose mode, outputting detailed information about each MCTS iteration, which can be a valuable tool for understanding the decision-making process of the AI.
 
 It should be noted that while MCTS does incorporate randomness (through the simulation phase), it is not a purely random algorithm. It uses the results of previous iterations to make informed decisions, and over time it builds a more accurate representation of the search space.
+
+Remember - defense is offense. Good luck!
 
 Author: Patrikas Vanagas, 2023
 )" << std::endl;
@@ -296,12 +298,12 @@ void run_console_interface()
   while (is_running) {
     try {
       int option = 0;
-      std::cout << "\nSELECT AN OPTION:\n"
-                << "1) Play against a robot\n"
-                << "2) Robot arena\n"
-                << "3) Human arena\n"
-                << "4) Read the docs\n"
-                << "5) (H)Exit\n";
+      std::cout << "\nMENU:\n"
+                << "\n[1] Play against a robot\n"
+                << "[2] Robot arena\n"
+                << "[3] Human arena\n"
+                << "[4] Read the docs\n"
+                << "[5] (H)Exit\n";
 
       option = get_parameter_within_bounds("Option: ", 1, 5);
       std::cout << "\n";

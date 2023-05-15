@@ -105,6 +105,9 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
     // Determine the maximum number of threads available on the hardware.
     number_of_threads = std::thread::hardware_concurrency();
   }
+  if (!is_verbose) {
+    std::cout << "Thinking silently..." << std::endl;
+  }
   //Expand root based on the current game state
   expand_node(root, board);
   int mcts_iteration_counter = 0;

@@ -7,12 +7,12 @@
 
 /**
  * @brief Implementation of the choose_move function for the Human_player class.
- * This function prompts the user to input a column and row for their move.
+ * This function prompts the user to input a row and column for their move.
  * It checks if the move is valid and, if not, prompts the user to try again.
  *
  * @param board The current state of the game board (Board).
  * @param player The current player (Cell_state).
- * @return The chosen move as a pair of integers, column first, row second.
+ * @return The chosen move as a pair of integers, row first, column second.
  */
 std::pair<int, int> Human_player::choose_move(const Board& board,
                                               Cell_state player) 

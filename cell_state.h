@@ -7,16 +7,23 @@
  * @enum Cell_state
  * @brief Represents the state of a cell in a Hex game.
  *
- * This enum class is used throughout the repo to denote the state of
- * individual cells on the game board. A cell in a Hex game can be in one of
- * three states: Empty, Blue, or Red. Empty indicates that no player has yet
- * claimed the cell. Blue and Red represent cells claimed by the respective
- * players. It is also used in the board and MCTS operations, e.g. detecting
- * the winer of the game.
+ * This enumeration class is used to denote the state of individual cells
+ * on the Hex game board. A cell in a Hex game can be in one of three states:
+ * Empty, Blue, or Red.
+ *
+ * Enumeration values:
+ * @value Empty The cell has not been claimed by any player.
+ * @value Blue The cell has been claimed by the Blue player.
+ * @value Red The cell has been claimed by the Red player.
+ *
+ * This enum is vital in operations like board visualization, gameplay mechanics
+ * (e.g., claiming cells), and in determining the winner of the game.
  */
 enum class Cell_state 
 {
-	Empty, Blue, Red 
+	Empty, ///< The cell is not claimed by any player.
+	Blue,  ///< The cell is claimed by the Blue player.
+	Red   ///< The cell is claimed by the Red player.
 };
 
 /**
