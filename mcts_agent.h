@@ -119,7 +119,7 @@ class Mcts_agent
     Node(Cell_state player, std::pair<int, int> move,
          std::shared_ptr<Node> parent_node = nullptr);
   };
-  // Private helper functions for MCTS. Documented in mcts_agent.cpp.
+  // Private helper functions for MCTS. More extensive docs are in mcts_agent.cpp.
   void expand_node(const std::shared_ptr<Node>& node, const Board& board);
   double calculate_uct_score(const std::shared_ptr<Node>& child_node,
                              const std::shared_ptr<Node>& parent_node);

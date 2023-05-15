@@ -11,7 +11,6 @@
 #include <sstream>
 #include <thread>
 
-// Constructor for Mcts_agent
 /**
  * @brief Constructs a new Mcts_agent.
  *

@@ -18,21 +18,38 @@ Board::Board(int size)
   }
 }
 
+/**
+ * @brief Displays the current state of the board on the console.
+ * The board is printed in a hexagonal pattern, with each cell represented by
+ * its current Cell_state (Empty, Player1, Player2). Each cell is connected to its
+ * neighbors with lines (- and \ /). The board is also labeled with numbers for
+ * rows and letters for columns for easier identification of cells.
+ */
 void Board::display_board() const 
 {
   std::cout << "\n";
+
+  // Loop through each cell in the board.
   for (size_t row = 0; row < board_size; ++row) {
+    // Indentation for the hexagonal pattern.
     std::cout << std::string(2 * row, ' ');
     for (size_t col = 0; col < board_size; ++col) {
+      // Print the state of the cell.
       std::cout << board[row][col];
+      // Print a line (-) between cells in the same row, except for the last
+      // cell.
       if (col < board_size - 1) {
         std::cout << " - ";
       }
     }
+    // Print the row number at the end of each row.
     std::cout << " " << row + 1;
     std::cout << "\n";
 
+    // Print lines (\ /) between cells in adjacent rows, except for the last
+    // row.
     if (row < board_size - 1) {
+      // Print the bottom coordinate labels (letters).
       std::cout << std::string(2 * row + 1, ' ');
       for (size_t col = 0; col < board_size - 1; ++col) {
         std::cout << "\\ / ";
@@ -49,18 +66,41 @@ void Board::display_board() const
   std::cout << "\n\n";
 }
 
+/**
+ * @brief Overloads the << operator for the Board class. This function allows
+ * the board to be directly printed to an output stream (such as std::cout) by
+ * calling the display_board() method of the Board class.
+ * @param os: The output stream.
+ * @param board: The board to be printed.
+ * @return The output stream.
+ */
 std::ostream& operator<<(std::ostream& os, const Board& board) 
 {
+  // Call the display_board() function to print the board to the output stream.
   board.display_board();
   return os;
 }
 
+/**
+ * @brief Checks if a given cell, identified by its x and y coordinates, is
+ * within the bounds of the board.
+ * @param move_x: The x-coordinate of the cell.
+ * @param move_y: The y-coordinate of the cell.
+ * @return True if the cell is within the bounds of the board, else False.
+ */
 bool Board::is_within_bounds(int move_x, int move_y) const 
 {
   return move_x >= 0 && move_x < board_size && move_y >= 0 &&
          move_y < board_size;
 }
 
+/**
+ * @brief Checks if a move is valid. A move is valid if it is within the bounds
+ * of the board and the target cell is empty.
+ * @param move_x: The x-coordinate of the cell.
+ * @param move_y: The y-coordinate of the cell.
+ * @return True if the move is valid, else False.
+ */
 bool Board::is_valid_move(int move_x, int move_y) const 
 {
   return is_within_bounds(move_x, move_y) &&
