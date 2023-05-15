@@ -91,7 +91,7 @@ double get_parameter_within_bounds<double>(const std::string& prompt,
 
 std::unique_ptr<Mcts_player> create_mcts_agent(
     const std::string& agent_prompt) {
-  std::cout << "Initializing " << agent_prompt << ":\n";
+  std::cout << "\nInitializing " << agent_prompt << ":\n";
 
   int max_decision_time_ms = get_parameter_within_bounds(
       "Enter max decision time in milliseconds (at least 100): ", 100, INT_MAX);
@@ -180,31 +180,36 @@ void print_docs() {
          "chance. It has a rather cult following in the community.\n\n";
 }
 
+// zoom out.
 void print_exit_ascii_art() {
   std::cout << R"(
-  ___                      _  _                                  _   ___ 
- | _ )  _  _   ___        | || |  _  _   _ __    __ _   _ _     (_) | _ \
- | _ \ | || | / -_)  _    | __ | | || | | '  \  / _` | | ' \     _  |  _/
- |___/  \_, | \___| ( )   |_||_|  \_,_| |_|_|_| \__,_| |_||_|   (_) |_|  
-        |__/        |/                                                                                                              
+
+  .___  ___.      ___   ____    ____    .___________. __    __   _______         ___       __     .______    _______    ____    __    ____  __  .___________. __    __     ____    ____  ______    __    __  
+  |   \/   |     /   \  \   \  /   /    |           ||  |  |  | |   ____|       /   \     |  |    |   _  \  |   ____|   \   \  /  \  /   / |  | |           ||  |  |  |    \   \  /   / /  __  \  |  |  |  | 
+  |  \  /  |    /  ^  \  \   \/   /     `---|  |----`|  |__|  | |  |__         /  ^  \    |  |    |  |_)  | |  |__       \   \/    \/   /  |  | `---|  |----`|  |__|  |     \   \/   / |  |  |  | |  |  |  | 
+  |  |\/|  |   /  /_\  \  \_    _/          |  |     |   __   | |   __|       /  /_\  \   |  |    |   _  <  |   __|       \            /   |  |     |  |     |   __   |      \_    _/  |  |  |  | |  |  |  | 
+  |  |  |  |  /  _____  \   |  |            |  |     |  |  |  | |  |____     /  _____  \  |  |    |  |_)  | |  |____       \    /\    /    |  |     |  |     |  |  |  |        |  |    |  `--'  | |  `--'  | 
+  |__|  |__| /__/     \__\  |__|            |__|     |__|  |__| |_______|   /__/     \__\ |__|    |______/  |_______|       \__/  \__/     |__|     |__|     |__|  |__|        |__|     \______/   \______/  
+                                                                                                                                                                                                             
+
      
 )" << '\n';
 }
 
 void run_console_interface() {
   print_welcome_ascii_art();
-  std::cout << "Welcome, Human.\n\n";
+  std::cout << "Welcome, Human.\n";
 
   bool is_running = true;
   while (is_running) {
     try {
       int option = 0;
-      std::cout << "SELECT AN OPTION:\n"
+      std::cout << "\nSELECT AN OPTION:\n"
                 << "1) Play against a robot\n"
                 << "2) Robot arena\n"
                 << "3) Human arena\n"
                 << "4) Read the docs\n"
-                << "5) Exit\n";
+                << "5) (H)Exit\n";
 
       option = get_parameter_within_bounds("Option: ", 1, 5);
       std::cout << "\n";
