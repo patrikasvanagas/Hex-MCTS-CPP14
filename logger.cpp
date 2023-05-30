@@ -5,10 +5,10 @@
 // Initialize static member
 std::shared_ptr<Logger> Logger::logger = nullptr;
 
-std::shared_ptr<Logger> Logger::instance() {
+std::shared_ptr<Logger> Logger::instance(bool is_verbose) {
   if (!logger) {
     logger = std::shared_ptr<Logger>(
-        new Logger(false));  // initialize with verbosity = false
+        new Logger(is_verbose));  // initialize with the verbosity provided
   }
   return logger;
 }

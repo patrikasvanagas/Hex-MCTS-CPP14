@@ -11,7 +11,7 @@ class Logger
 {
  public:
   // Return the instance of the Logger (creates it if it doesn't exist)
-  static std::shared_ptr<Logger> instance();
+  static std::shared_ptr<Logger> instance(bool is_verbose);
 
   // Non-copyable and non-movable
   Logger(const Logger&) = delete;
@@ -26,13 +26,14 @@ class Logger
   // Log a message to the console
   void log(const std::string& message);
 
+  bool get_verbosity() const { return is_verbose; }
+
  private:
 
   // Singleton instance
   static std::shared_ptr<Logger> logger;
 
   bool is_verbose;
-  bool get_verbosity() const { return is_verbose; }
   // Mutex for thread safety
   std::mutex mutex;
 };
