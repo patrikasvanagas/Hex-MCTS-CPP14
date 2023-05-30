@@ -131,6 +131,7 @@
     <ClCompile Include="cell_state.cpp" />
     <ClCompile Include="console_interface.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mcts_agent.cpp" />
     <ClCompile Include="player.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="cell_state.h" />
     <ClInclude Include="console_interface.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="logger.h" />
     <ClInclude Include="mcts_agent.h" />
     <ClInclude Include="player.h" />
   </ItemGroup>
