@@ -58,4 +58,58 @@ void Logger::log_simulation_start(const std::pair<int, int>& move,
   log(message.str());
 }
 
+void Logger::log_simulation_step(Cell_state current_player, const Board& board,
+                                 const std::pair<int, int>& move) {
+  std::stringstream message;
+  message << "Current player in simulation is " << current_player
+          << " in Board state:\n"
+          << board;
+  message << current_player << " makes random move " << move.first << ","
+          << move.second << ". ";
+  log(message.str());
+}
+
+void Logger::log_simulation_end(Cell_state winning_player, const Board& board) {
+  std::stringstream message;
+  message << "DETECTED WIN for player " << winning_player
+          << " in Board state:\n"
+          << board << "\n";
+  log(message.str());
+}
+
+void Logger::log_backpropagation_result(const std::pair<int, int>& move,
+                                        int win_count, int visit_count) {
+  std::stringstream message;
+  message << "BACKPROPAGATED result to node " << move.first << ", "
+          << move.second << ". It currently has " << win_count << " wins and "
+          << visit_count << " visits.";
+  log(message.str());
+}
+
+void Logger::log_root_stats(int visit_count, int win_count,
+                            size_t child_nodes) {
+  std::stringstream message;
+  message << "\nAFTER BACKPROPAGATION, root node has " << visit_count
+          << " visits, " << win_count << " wins, and " << child_nodes
+          << " child nodes. Their details are:\n";
+  log(message.str());
+}
+
+void Logger::log_child_node_stats(const std::pair<int, int>& move,
+                                  int win_count, int visit_count) {
+  std::stringstream message;
+  message << "Child node " << move.first << "," << move.second
+          << ": Wins: " << win_count << ", Visits: " << visit_count
+          << ". Win ratio: ";
+
+  if (visit_count) {
+    message << std::fixed << std::setprecision(2)
+            << static_cast<double>(win_count) / visit_count;
+  } else {
+    message << "N/A (no visits yet)";
+  }
+
+  log(message.str());
+}
+
 

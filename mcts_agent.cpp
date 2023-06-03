@@ -82,30 +82,12 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
       backpropagate(chosen_child, playout_winner);
     }
     // Print interesting statistics:
-    if (is_verbose) {
-      std::cout << "\nAFTER BACKPROPAGATION, root node has "
-                << root->visit_count << " visits, " << root->win_count
-                << " wins, and " << root->child_nodes.size()
-                << " child nodes. Their details are:\n";
-      for (const auto& child : root->child_nodes) {
-        std::ostringstream node_info_stream;
-        node_info_stream << "Child node " << child->move.first << ","
-                         << child->move.second << ": Wins: " << child->win_count
-                         << ", Visits: " << child->visit_count
-                         << ". Win ratio: ";
-
-        if (child->visit_count) {
-          node_info_stream << std::fixed << std::setprecision(2)
-                           << static_cast<double>(child->win_count) /
-                                  child->visit_count;
-        } else {
-          node_info_stream << "N/A (no visits yet)";
-        }
-
-        std::cout << node_info_stream.str() << std::endl;
-      }
+    logger->log_root_stats(root->visit_count, root->win_count,
+                           root->child_nodes.size());
+    for (const auto& child : root->child_nodes) {
+      logger->log_child_node_stats(child->move, child->win_count,
+                                   child->visit_count);
     }
-
     mcts_iteration_counter++;
   }
   if (is_verbose) {
@@ -231,27 +213,14 @@ Cell_state Mcts_agent::simulate_random_playout(
         0, static_cast<int>(valid_moves.size() - 1));
     std::pair<int, int> random_move =
         valid_moves[distribution(random_generator)];
-    if (is_verbose) {
-      std::cout << "Current player in simulation is " << current_player
-                << " in Board state:\n"
-                << board;
-      std::cout << current_player << " makes random move " << random_move.first
-                << "," << random_move.second << ". ";
-    }
-
+    logger->log_simulation_step(current_player, board, random_move);
     board.make_move(random_move.first, random_move.second, current_player);
     // If a player has won, break the loop
     if (board.check_winner() != Cell_state::Empty) {
-      if (is_verbose) {
-        std::cout << "DETECTED WIN for player " << current_player
-                  << " in Board state:\n"
-                  << board << "\n";
-      }
-
+      logger->log_simulation_end(current_player, board);
       break;
     }
   }
-
   return current_player;
 }
 
@@ -268,13 +237,8 @@ void Mcts_agent::backpropagate(std::shared_ptr<Node>& node, Cell_state winner) {
     if (winner == current_node->player) {
       current_node->win_count += 1;
     }
-
-    if (is_verbose) {
-      std::cout << "BACKPROPAGATED result to node " << current_node->move.first
-                << ", " << current_node->move.second << ". It currently has "
-                << current_node->win_count << " wins and "
-                << current_node->visit_count << " visits." << std::endl;
-    }
+    logger->log_backpropagation_result(
+        current_node->move, current_node->win_count, current_node->visit_count);
     // Move to the parent node for the next iteration
     current_node = current_node->parent_node;
   }
