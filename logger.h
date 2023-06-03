@@ -1,5 +1,3 @@
-// logger.h
-
 #ifndef LOGGER_H
 #define LOGGER_H
 
@@ -29,6 +27,8 @@ class Logger
   void log_mcts_start(Cell_state player);
   void log_iteration_number(int iteration_number);
 
+  void log_expanded_child(const std::pair<int, int>& move);
+
   void log_selected_child(const std::pair<int, int>& move, double uct_score);
 
   void log_simulation_start(const std::pair<int, int>& move, const Board& board);
@@ -56,7 +56,7 @@ class Logger
   // Singleton instance
   static std::shared_ptr<Logger> logger;
   bool is_verbose;
-  void log(const std::string& message);
+  void log(const std::string& message, bool always_print);
   // Mutex for thread safety
   std::mutex mutex;
 

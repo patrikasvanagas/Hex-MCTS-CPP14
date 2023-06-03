@@ -2,8 +2,6 @@
 
 #include <cassert>
 #include <cmath>
-#include <iomanip>
-#include <iostream>
 #include <limits>
 #include <memory>
 #include <mutex>
@@ -44,9 +42,6 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
   if (is_parallelized) {
     // Determine the maximum number of threads available on the hardware.
     number_of_threads = std::thread::hardware_concurrency();
-  }
-  if (!is_verbose) {
-    std::cout << "Thinking silently..." << std::endl;
   }
   // Expand root based on the current game state
   expand_node(root, board);
@@ -127,10 +122,7 @@ void Mcts_agent::expand_node(const std::shared_ptr<Node>& node,
     std::shared_ptr<Node> new_child =
         std::make_shared<Node>(node->player, move, node);
     node->child_nodes.push_back(new_child);
-    if (is_verbose) {
-      std::cout << "EXPANDED ROOT'S CHILD: " << move.first << "," << move.second
-                << std::endl;
-    }
+    logger->log_expanded_child(move);
   }
 }
 

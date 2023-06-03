@@ -145,7 +145,7 @@ std::unique_ptr<Mcts_player> create_mcts_agent(
   std::cout << "\nInitializing " << agent_prompt << ":\n";
 
   int max_decision_time_ms = get_parameter_within_bounds(
-      "Enter max decision time in milliseconds (at least 2000): ", 2000, INT_MAX);
+      "Enter max decision time in milliseconds (at least 100): ", 100, INT_MAX);
 
   double exploration_constant = 1.41;
   if (get_yes_or_no_response("Would you like to change the default exploration "
