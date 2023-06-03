@@ -65,9 +65,11 @@ void Logger::log_simulation_start(const std::pair<int, int>& move,
 {
   if (is_verbose) {
     std::ostringstream message;
+    std::ostringstream board_string;
+    board.display_board(board_string);
     message << "\nSIMULATING A RANDOM PLAYOUT from node " << move.first << ", "
             << move.second << ". Simulation board is in state:\n"
-            << board;
+            << board_string.str();
     log(message.str());
   }
 }
@@ -77,9 +79,11 @@ void Logger::log_simulation_step(Cell_state current_player, const Board& board,
 {
   if (is_verbose) {
     std::ostringstream message;
+    std::ostringstream board_string;
+    board.display_board(board_string);
     message << "Current player in simulation is " << current_player
             << " in Board state:\n"
-            << board;
+            << board_string.str();
     message << current_player << " makes random move " << move.first << ","
             << move.second << ". ";
     log(message.str());
@@ -90,9 +94,11 @@ void Logger::log_simulation_end(Cell_state winning_player, const Board& board)
 {
   if (is_verbose) {
     std::ostringstream message;
+    std::ostringstream board_string;
+    board.display_board(board_string);
     message << "DETECTED WIN for player " << winning_player
             << " in Board state:\n"
-            << board << "\n";
+            << board_string.str() << "\n";
     log(message.str());
   }
 }

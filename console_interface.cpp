@@ -283,7 +283,7 @@ void print_welcome_ascii_art()
  */
 void print_board_and_winner(Board& board) 
 {
-  board.display_board();
+  board.display_board(std::cout);
   Cell_state winner = board.check_winner();
   std::cout << "Winner: " << winner << std::endl;
   std::cout << "------------------" << std::endl;

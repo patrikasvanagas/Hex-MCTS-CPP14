@@ -60,7 +60,7 @@ void Game::play()
     Cell_state current_player =
         current_player_index == 0 ? Cell_state::Blue : Cell_state::Red;
     std::cout << "\nPlayer " << current_player << "'s turn:" << std::endl;
-    board.display_board();
+    board.display_board(std::cout);
     std::pair<int, int> chosen_move =
         players[current_player_index]->choose_move(board, current_player);
     int chosen_row = chosen_move.first + 1;
@@ -70,7 +70,7 @@ void Game::play()
     board.make_move(chosen_move.first, chosen_move.second, current_player);
     switch_player();
   }
-  board.display_board();
+  board.display_board(std::cout);
   Cell_state winning_player =
       (current_player_index == 0) ? Cell_state::Red : Cell_state::Blue;
   std::cout << "Player " << winning_player << " wins!" << std::endl;

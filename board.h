@@ -26,7 +26,7 @@ class Board
   /**
    * @brief Displays the current state of the game board.
    */
-  void display_board() const;
+  void display_board(std::ostream& os) const;
 
   /**
    * @brief Checks if a move is valid, i.e., within the board boundaries and not

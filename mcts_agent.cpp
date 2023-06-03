@@ -162,7 +162,6 @@ std::shared_ptr<Mcts_agent::Node> Mcts_agent::select_child(
   // If verbose mode is enabled, print the move coordinates and UCT score of the
   // selected child
   logger->log_selected_child(best_child->move, max_score);
-
   return best_child;
 }
 

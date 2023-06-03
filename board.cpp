@@ -55,45 +55,44 @@ Board::Board(int size)
  * neighbors with lines (- and \ /). The board is also labeled with numbers for
  * rows and letters for columns for easier identification of cells.
  */
-void Board::display_board() const 
-{
-  std::cout << "\n";
+void Board::display_board(std::ostream& os = std::cout) const {
+  os << "\n";
 
   // Loop through each cell in the board.
   for (size_t row = 0; row < board_size; ++row) {
     // Indentation for the hexagonal pattern.
-    std::cout << std::string(2 * row, ' ');
+    os << std::string(2 * row, ' ');
     for (size_t col = 0; col < board_size; ++col) {
       // Print the state of the cell.
-      std::cout << board[row][col];
+      os << board[row][col];
       // Print a line (-) between cells in the same row, except for the last
       // cell.
       if (col < board_size - 1) {
-        std::cout << " - ";
+        os << " - ";
       }
     }
     // Print the row number at the end of each row.
-    std::cout << " " << row + 1;
-    std::cout << "\n";
+    os << " " << row + 1;
+    os << "\n";
 
     // Print lines (\ /) between cells in adjacent rows, except for the last
     // row.
     if (row < board_size - 1) {
       // Print the bottom coordinate labels (letters).
-      std::cout << std::string(2 * row + 1, ' ');
+      os << std::string(2 * row + 1, ' ');
       for (size_t col = 0; col < board_size - 1; ++col) {
-        std::cout << "\\ / ";
+        os << "\\ / ";
       }
-      std::cout << "\\";
-      std::cout << "\n";
+      os << "\\";
+      os << "\n";
     }
   }
   // print the bottom coordinate labels
-  std::cout << std::string(2 * (board_size - 1) - 1, ' ');
+  os << std::string(2 * (board_size - 1) - 1, ' ');
   for (size_t col = 0; col < board_size; ++col) {
-    std::cout << "  " << static_cast<char>('a' + col) << " ";
+    os << "  " << static_cast<char>('a' + col) << " ";
   }
-  std::cout << "\n\n";
+  os << "\n\n";
 }
 
 /**
@@ -107,7 +106,7 @@ void Board::display_board() const
 std::ostream& operator<<(std::ostream& os, const Board& board) 
 {
   // Call the display_board() function to print the board to the output stream.
-  board.display_board();
+  board.display_board(os);
   return os;
 }
 
