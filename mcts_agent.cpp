@@ -90,11 +90,7 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
     }
     mcts_iteration_counter++;
   }
-  if (is_verbose) {
-    std::cout << "\nTIMER RAN OUT. " << mcts_iteration_counter
-              << " iterations completed. CHOOSING A MOVE FROM ROOT'S CHILDREN:"
-              << std::endl;
-  }
+  logger->log_timer_ran_out(mcts_iteration_counter);
   // Select the child with the highest win ratio as the best move:
   double max_win_ratio = -1.;
   std::shared_ptr<Node> best_child;
@@ -102,21 +98,7 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
     double win_ratio =
         static_cast<double>(child->win_count) / child->visit_count;
     // If verbose mode is on, print the win ratio for each child node.
-    if (is_verbose) {
-      std::ostringstream win_ratio_stream;
-      if (child->visit_count > 0) {
-        win_ratio_stream << std::fixed << std::setprecision(2)
-                         << static_cast<double>(child->win_count) /
-                                child->visit_count;
-      } else {
-        win_ratio_stream << "N/A (no visits yet)";
-      }
-
-      std::cout << "Child " << child->move.first << "," << child->move.second
-                << " has a win ratio of " << win_ratio_stream.str()
-                << std::endl;
-    }
-
+    logger->log_node_win_ratio(child->move, child->win_count, child->visit_count);
     if (win_ratio > max_win_ratio) {
       max_win_ratio = win_ratio;
       best_child = child;
@@ -128,13 +110,10 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
     throw std::runtime_error(
         "Statistics are not sufficient to choose a move. You likely gave the "
         "robot too little time for the given board size.");
-  } else if (is_verbose) {
-    std::cout << "\nAfter " << mcts_iteration_counter
-              << " iterations, choose child " << best_child->move.first << ", "
-              << best_child->move.second << " with win ratio "
-              << std::setprecision(4) << max_win_ratio << std::endl;
-    std::cout << "\n--------------------MCTS VERBOSE END--------------------\n"
-              << std::endl;
+  } else {
+    logger->log_best_child_chosen(mcts_iteration_counter, best_child->move,
+                                  max_win_ratio);
+    logger->log_mcts_end();
   }
   return best_child->move;
 }

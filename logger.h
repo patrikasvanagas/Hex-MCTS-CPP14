@@ -41,8 +41,15 @@ class Logger
   void log_child_node_stats(const std::pair<int, int>& move, int win_count,
                             int visit_count);
 
+  void log_timer_ran_out(int iteration_counter);
 
+  void log_node_win_ratio(const std::pair<int, int>& move, int win_count,
+                     int visit_count);
 
+  void log_best_child_chosen(int iteration_counter,
+                             const std::pair<int, int>& move, double win_ratio);
+
+  void log_mcts_end();
 
  private:
 
