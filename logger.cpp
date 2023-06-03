@@ -49,4 +49,13 @@ void Logger::log_selected_child(const std::pair<int, int>& move,
   log(message.str());
 }
 
+void Logger::log_simulation_start(const std::pair<int, int>& move,
+                                  const Board& board) {
+  std::stringstream message;
+  message << "\nSIMULATING A RANDOM PLAYOUT from node " << move.first << ", "
+          << move.second << ". Simulation board is in state:\n"
+          << board;
+  log(message.str());
+}
+
 

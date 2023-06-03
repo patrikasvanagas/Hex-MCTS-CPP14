@@ -217,13 +217,8 @@ Cell_state Mcts_agent::simulate_random_playout(
     const std::shared_ptr<Node>& node, Board board) {
   // Start the simulation with the player at the node's move
   Cell_state current_player = node->player;
-  board.make_move(node->move.first, node->move.second, current_player);
-  if (is_verbose) {
-    std::cout << "\nSIMULATING A RANDOM PLAYOUT from node " << node->move.first
-              << ", " << node->move.second
-              << ". Simulation board is in state:\n"
-              << board;
-  }
+  board.make_move(node->move.first, node->move.second, current_player);\
+  logger->log_simulation_start(node->move, board);
   // Continue simulation until a winner is detected
   while (board.check_winner() == Cell_state::Empty) {
     // Switch player

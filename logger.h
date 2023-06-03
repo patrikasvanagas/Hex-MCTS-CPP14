@@ -29,6 +29,7 @@ class Logger
   void log_mcts_start(Cell_state player);
   void log_iteration_number(int iteration_number);
   void log_selected_child(const std::pair<int, int>& move, double uct_score);
+  void log_simulation_start(const std::pair<int, int>& move, const Board& board);
 
 
  private:
