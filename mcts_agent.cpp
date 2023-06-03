@@ -35,11 +35,7 @@ Mcts_agent::Node::Node(Cell_state player, std::pair<int, int> move,
 
 std::pair<int, int> Mcts_agent::choose_move(const Board& board,
                                             Cell_state player) {
-  if (is_verbose) {
-    std::cout << "\n-------------MCTS VERBOSE START - " << player
-              << " to move-------------\n"
-              << std::endl;
-  }
+  logger->log_mcts_start(player);
   // Create a new root node for MCTS
   root = std::make_shared<Node>(player, std::make_pair(-1, -1), nullptr);
   // Prepare for potential parallelism
@@ -60,11 +56,7 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
   // The main loop of the MCTS. It runs until the decision-making time limit is
   // reached.
   while (std::chrono::high_resolution_clock::now() < end_time) {
-    if (is_verbose) {
-      std::cout << "\n------------------STARTING SIMULATION "
-                << mcts_iteration_counter + 1 << "------------------"
-                << std::endl;
-    }
+    logger->log_iteration_number(mcts_iteration_counter + 1);
     std::shared_ptr<Node> chosen_child = select_child(root);
     if (is_parallelized) {
       // Start the threads and put their separate results into a vector:
@@ -216,15 +208,7 @@ std::shared_ptr<Mcts_agent::Node> Mcts_agent::select_child(
   }
   // If verbose mode is enabled, print the move coordinates and UCT score of the
   // selected child
-  if (is_verbose) {
-    std::cout << "\nSELECTED CHILD " << best_child->move.first << ", "
-              << best_child->move.second << " with UCT of ";
-    if (max_score == std::numeric_limits<double>::max()) {
-      std::cout << "infinity" << std::endl;
-    } else {
-      std::cout << std::setprecision(4) << max_score << std::endl;
-    }
-  }
+  logger->log_selected_child(best_child->move, max_score);
 
   return best_child;
 }

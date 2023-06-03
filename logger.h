@@ -6,6 +6,11 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <sstream>
+#include <iomanip>
+
+#include "cell_state.h"
+#include "board.h"
 
 class Logger 
 {
@@ -21,7 +26,10 @@ class Logger
   //void set_verbosity(bool verbose) { is_verbose = verbose; }
   bool get_verbosity() const { return is_verbose; }
 
-  //void log_choose_move_start()
+  void log_mcts_start(Cell_state player);
+  void log_iteration_number(int iteration_number);
+  void log_selected_child(const std::pair<int, int>& move, double uct_score);
+
 
  private:
 
