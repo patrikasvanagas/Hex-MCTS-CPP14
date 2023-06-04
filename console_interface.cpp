@@ -246,6 +246,62 @@ void start_human_arena() {
 }
 
 /**
+ * @brief Run the console interface of the game.
+ *
+ * This function drives the main loop of the console interface.
+ * It displays a menu and handles user's selection,
+ * allowing the user to start different types of games or read the game docs.
+ * It also handles exceptions and displays appropriate error messages.
+ */
+void run_console_interface() {
+  print_welcome_ascii_art();
+  std::cout << "Welcome.\n";
+
+  bool is_running = true;
+  while (is_running) {
+    try {
+      int option = 0;
+      std::cout << "\nMENU:\n"
+                << "\n[1] Play against a robot\n"
+                << "[2] Robot arena\n"
+                << "[3] Human arena\n"
+                << "[4] Read the docs\n"
+                << "[5] (H)Exit\n";
+
+      option = get_parameter_within_bounds("Option: ", 1, 5);
+      std::cout << "\n";
+
+      switch (option) {
+        case 1:
+          start_match_against_robot();
+          break;
+        case 2:
+          start_robot_arena();
+          break;
+        case 3:
+          start_human_arena();
+          break;
+        case 4:
+          print_docs();
+          break;
+        case 5:
+          is_running = false;
+          break;
+        default:
+          break;
+      }
+    } catch (const std::invalid_argument& e) {
+      std::cout << "Error: " << e.what() << "\n";
+    } catch (const std::logic_error& e) {
+      std::cout << "Error: " << e.what() << "\n";
+    } catch (const std::runtime_error& e) {
+      std::cout << "Error: " << e.what() << "\n";
+    }
+  }
+  print_exit_ascii_art();
+}
+
+/**
  * @brief Prints welcome message in ASCII art.
  */
 void print_welcome_ascii_art() {
@@ -373,60 +429,4 @@ void print_exit_ascii_art() {
              /____/                                                                         /____/               
 
 )" << '\n';
-}
-
-/**
- * @brief Run the console interface of the game.
- *
- * This function drives the main loop of the console interface.
- * It displays a menu and handles user's selection,
- * allowing the user to start different types of games or read the game docs.
- * It also handles exceptions and displays appropriate error messages.
- */
-void run_console_interface() {
-  print_welcome_ascii_art();
-  std::cout << "Welcome.\n";
-
-  bool is_running = true;
-  while (is_running) {
-    try {
-      int option = 0;
-      std::cout << "\nMENU:\n"
-                << "\n[1] Play against a robot\n"
-                << "[2] Robot arena\n"
-                << "[3] Human arena\n"
-                << "[4] Read the docs\n"
-                << "[5] (H)Exit\n";
-
-      option = get_parameter_within_bounds("Option: ", 1, 5);
-      std::cout << "\n";
-
-      switch (option) {
-        case 1:
-          start_match_against_robot();
-          break;
-        case 2:
-          start_robot_arena();
-          break;
-        case 3:
-          start_human_arena();
-          break;
-        case 4:
-          print_docs();
-          break;
-        case 5:
-          is_running = false;
-          break;
-        default:
-          break;
-      }
-    } catch (const std::invalid_argument& e) {
-      std::cout << "Error: " << e.what() << "\n";
-    } catch (const std::logic_error& e) {
-      std::cout << "Error: " << e.what() << "\n";
-    } catch (const std::runtime_error& e) {
-      std::cout << "Error: " << e.what() << "\n";
-    }
-  }
-  print_exit_ascii_art();
 }

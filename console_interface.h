@@ -9,12 +9,6 @@
 #include "game.h"
 
 /**
- * @brief Function to get a yes or no response from the user.
- * @return Character 'y' or 'n' entered by the user.
- */
-char get_yes_or_no_response();
-
-/**
  * @brief Check if a string can be interpreted as an integer.
  * @param s String to check.
  * @return True if the string is an integer, false otherwise.
@@ -22,41 +16,10 @@ char get_yes_or_no_response();
 bool is_integer(const std::string& s);
 
 /**
- * @brief Create an MCTS agent for the game.
- * @param agent_prompt The prompt to display when creating the agent.
- * @return A unique_ptr to the created Mcts_player.
+ * @brief Function to get a yes or no response from the user.
+ * @return Character 'y' or 'n' entered by the user.
  */
-std::unique_ptr<Mcts_player> create_mcts_agent(const std::string& agent_prompt);
-
-/**
- * @brief Start a match against a robot player.
- */
-void start_match_against_robot();
-
-/**
- * @brief Start a robot vs robot match.
- */
-void start_robot_arena();
-
-/**
- * @brief Start a human vs human match.
- */
-void start_human_arena();
-
-/**
- * @brief Print the game documentation.
- */
-void print_docs();
-
-/**
- * @brief Print the exit message in ASCII art.
- */
-void print_exit_ascii_art();
-
-/**
- * @brief Run the console interface.
- */
-void run_console_interface();
+char get_yes_or_no_response();
 
 /**
  * @brief Check if a value is within bounds.
@@ -90,5 +53,64 @@ template <>
 double get_parameter_within_bounds<double>(const std::string& prompt,
                                            double lower_bound,
                                            double upper_bound);
+
+/**
+ * @brief Create an MCTS agent for the game.
+ * @param agent_prompt The prompt to display when creating the agent.
+ * @return A unique_ptr to the created Mcts_player.
+ */
+std::unique_ptr<Mcts_player> create_mcts_agent(const std::string& agent_prompt);
+
+/**
+ * @brief A simple countdown timer.
+ * @param seconds The number of seconds to count down from.
+ */
+void countdown(int seconds);
+
+/**
+ * @brief Start a match against a robot player.
+ */
+void start_match_against_robot();
+
+/**
+ * @brief Start a robot vs robot match.
+ */
+void start_robot_arena();
+
+/**
+ * @brief Start a human vs human match.
+ */
+void start_human_arena();
+
+/**
+ * @brief Run the console interface.
+ */
+void run_console_interface();
+
+/**
+ * @brief Print the welcome message in ASCII art.
+ */
+void print_welcome_ascii_art();
+
+/**
+ * @brief Print the game board and the winner.
+ * @param board The game board.
+ */
+void print_board_and_winner(Board& board);
+
+/**
+ * @brief Show the winning condition of the game.
+ */
+void display_winning_condition();
+
+/**
+ * @brief Print the game documentation.
+ */
+void print_docs();
+
+/**
+ * @brief Print the exit message in ASCII art.
+ */
+void print_exit_ascii_art();
 
 #endif  // CONSOLE_INTERFACE_H
