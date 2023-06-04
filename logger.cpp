@@ -12,6 +12,7 @@ std::shared_ptr<Logger> Logger::instance(bool is_verbose) {
 
 void Logger::log(const std::string& message, bool always_print = false) {
   if (is_verbose || always_print) {
+    // Lock the mutex to prevent interleaved output
     std::lock_guard<std::mutex> lock(mutex);
     std::cout << message << std::endl;
   }

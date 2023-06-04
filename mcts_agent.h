@@ -11,14 +11,36 @@
 #include "logger.h"
 
 /**
- * @brief This class provides the agent for Monte Carlo Tree Search (MCTS).
- * It is used to make strategic decisions in a board game by simulating
- * possible moves and choosing the most promising one.
+ * @class Mcts_agent
  *
- * Node is a nested class that represents a node in the MCTS tree.
+ * @brief This class implements a Monte Carlo Tree Search (MCTS) agent to choose
+ * moves in a game.
  *
- * Logger is a member class that is used to log the MCTS process if
- * is_verbose is set to true.
+ * The `Mcts_agent` class uses MCTS to simulate game play and choose the best
+ * move for a given game state. It supports optional parallelization for
+ * increased performance, and offers optional verbosity for logging purposes.
+ *
+ * MCTS works by simulating the game from the current state to a terminal state,
+ * then updating the statistics of each visited node based on the outcome. This
+ * is done repeatedly until a pre-set time limit is reached. The agent then
+ * chooses the move that leads to the node with the highest win ratio.
+ *
+ * @note This class assumes a game interface with `Board` and `Cell_state` types
+ * defined, and a `Logger` class for logging purposes. The `Board` class should
+ * have methods `get_valid_moves()` to return a list of valid moves,
+ * `make_move()` to make a move, and `check_winner()` to check if there is a
+ * winner. `Cell_state` should define the state of a cell on the board, and
+ * should at least include `Empty`, `Red`, and `Blue`.
+ *
+ * @param exploration_factor A parameter to balance exploration vs exploitation
+ * in the UCT formula.
+ * @param max_decision_time The maximum time in milliseconds that the agent can
+ * use to make a decision.
+ * @param is_parallelized Determines whether the MCTS iterations should be
+ * parallelized.
+ * @param is_verbose If true, the agent logs more detailed information about its
+ * decision-making process.
+ *
  */
 class Mcts_agent {
  public:
