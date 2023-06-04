@@ -19,11 +19,10 @@
  * This enum is vital in operations like board visualization, gameplay mechanics
  * (e.g., claiming cells), and in determining the winner of the game.
  */
-enum class Cell_state 
-{
-	Empty, ///< The cell is not claimed by any player.
-	Blue,  ///< The cell is claimed by the Blue player.
-	Red   ///< The cell is claimed by the Red player.
+enum class Cell_state {
+  Empty,  ///< The cell is not claimed by any player.
+  Blue,   ///< The cell is claimed by the Blue player.
+  Red     ///< The cell is claimed by the Red player.
 };
 
 /**

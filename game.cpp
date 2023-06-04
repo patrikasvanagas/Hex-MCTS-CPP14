@@ -24,21 +24,9 @@
  */
 Game::Game(int board_size, std::unique_ptr<Player> player1,
            std::unique_ptr<Player> player_2)
-    : board(board_size), current_player_index(0) 
-{
+    : board(board_size), current_player_index(0) {
   players[0] = std::move(player1);
   players[1] = std::move(player_2);
-}
-
-/**
- * @brief Switches the current player.
- *
- * This function switches the turn to the other player. It is called after a
- * player has made a move.
- */
-void Game::switch_player() 
-{ 
-    current_player_index = 1 - current_player_index; 
 }
 
 /**
@@ -54,8 +42,7 @@ void Game::switch_player()
  *   - Switches to the other player.
  * Once a player wins, it displays the final state of the board and the winner.
  */
-void Game::play() 
-{
+void Game::play() {
   while (board.check_winner() == Cell_state::Empty) {
     Cell_state current_player =
         current_player_index == 0 ? Cell_state::Blue : Cell_state::Red;
@@ -75,3 +62,13 @@ void Game::play()
       (current_player_index == 0) ? Cell_state::Red : Cell_state::Blue;
   std::cout << "Player " << winning_player << " wins!" << std::endl;
 }
+
+/**
+ * @brief Switches the current player.
+ *
+ * This function switches the turn to the other player. It is called after a
+ * player has made a move.
+ */
+void Game::switch_player() { current_player_index = 1 - current_player_index; }
+
+

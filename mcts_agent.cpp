@@ -37,8 +37,7 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
   // Create a new root node for MCTS
   root = std::make_shared<Node>(player, std::make_pair(-1, -1), nullptr);
   // Prepare for potential parallelism
-  std::vector<std::thread> threads;
-  unsigned int number_of_threads;
+  unsigned int number_of_threads = 1;
   if (is_parallelized) {
     // Determine the maximum number of threads available on the hardware.
     number_of_threads = std::thread::hardware_concurrency();
@@ -48,8 +47,35 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
   int mcts_iteration_counter = 0;
   auto start_time = std::chrono::high_resolution_clock::now();
   auto end_time = start_time + max_decision_time;
-  // The main loop of the MCTS. It runs until the decision-making time limit is
-  // reached.
+  perform_mcts_iterations(end_time, mcts_iteration_counter, board,
+                          number_of_threads);
+  logger->log_timer_ran_out(mcts_iteration_counter);
+  // Select the child with the highest win ratio as the best move:
+  std::shared_ptr<Node> best_child = select_best_child();
+  logger->log_best_child_chosen(
+      mcts_iteration_counter, best_child->move,
+      static_cast<double>(best_child->win_count) / best_child->visit_count);
+  logger->log_mcts_end();
+  return best_child->move;
+}
+
+void Mcts_agent::expand_node(const std::shared_ptr<Node>& node,
+                             const Board& board) {
+  std::vector<std::pair<int, int>> valid_moves = board.get_valid_moves();
+  // For each valid move, create a new child node and add it to the node's
+  // children.
+  for (const auto& move : valid_moves) {
+    std::shared_ptr<Node> new_child =
+        std::make_shared<Node>(node->player, move, node);
+    node->child_nodes.push_back(new_child);
+    logger->log_expanded_child(move);
+  }
+}
+
+void Mcts_agent::perform_mcts_iterations(
+    const std::chrono::time_point<std::chrono::high_resolution_clock>& end_time,
+    int& mcts_iteration_counter, const Board& board,
+    unsigned int number_of_threads) {
   while (std::chrono::high_resolution_clock::now() < end_time) {
     logger->log_iteration_number(mcts_iteration_counter + 1);
     std::shared_ptr<Node> chosen_child = select_child(root);
@@ -73,61 +99,6 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
                                    child->visit_count);
     }
     mcts_iteration_counter++;
-  }
-  logger->log_timer_ran_out(mcts_iteration_counter);
-  // Select the child with the highest win ratio as the best move:
-  double max_win_ratio = -1.;
-  std::shared_ptr<Node> best_child;
-  for (const auto& child : root->child_nodes) {
-    double win_ratio =
-        static_cast<double>(child->win_count) / child->visit_count;
-    // If verbose mode is on, print the win ratio for each child node.
-    logger->log_node_win_ratio(child->move, child->win_count, child->visit_count);
-    if (win_ratio > max_win_ratio) {
-      max_win_ratio = win_ratio;
-      best_child = child;
-    }
-  }
-  // Would be thrown if the time was too short for a single playout, but
-  // sometimes the compiler just ignores the timer. This is a failsafe.
-  if (!best_child) {
-    throw std::runtime_error(
-        "Statistics are not sufficient to choose a move. You likely gave the "
-        "robot too little time for the given board size.");
-  } else {
-    logger->log_best_child_chosen(mcts_iteration_counter, best_child->move,
-                                  max_win_ratio);
-    logger->log_mcts_end();
-  }
-  return best_child->move;
-}
-
-void Mcts_agent::expand_node(const std::shared_ptr<Node>& node,
-                             const Board& board) {
-  std::vector<std::pair<int, int>> valid_moves = board.get_valid_moves();
-  // For each valid move, create a new child node and add it to the node's
-  // children.
-  for (const auto& move : valid_moves) {
-    std::shared_ptr<Node> new_child =
-        std::make_shared<Node>(node->player, move, node);
-    node->child_nodes.push_back(new_child);
-    logger->log_expanded_child(move);
-  }
-}
-
-double Mcts_agent::calculate_uct_score(
-    const std::shared_ptr<Node>& child_node,
-    const std::shared_ptr<Node>& parent_node) {
-  // If the child node has not been visited yet, return a high value to
-  // encourage exploration.
-  if (child_node->visit_count == 0) {
-    return std::numeric_limits<double>::max();
-  } else {
-    // Otherwise, calculate the UCT score using the UCT formula.
-    return static_cast<double>(child_node->win_count) /
-               child_node->visit_count +
-           exploration_factor * std::sqrt(std::log(parent_node->visit_count) /
-                                          child_node->visit_count);
   }
 }
 
@@ -154,11 +125,27 @@ std::shared_ptr<Mcts_agent::Node> Mcts_agent::select_child(
   return best_child;
 }
 
+double Mcts_agent::calculate_uct_score(
+    const std::shared_ptr<Node>& child_node,
+    const std::shared_ptr<Node>& parent_node) {
+  // If the child node has not been visited yet, return a high value to
+  // encourage exploration.
+  if (child_node->visit_count == 0) {
+    return std::numeric_limits<double>::max();
+  } else {
+    // Otherwise, calculate the UCT score using the UCT formula.
+    return static_cast<double>(child_node->win_count) /
+               child_node->visit_count +
+           exploration_factor * std::sqrt(std::log(parent_node->visit_count) /
+                                          child_node->visit_count);
+  }
+}
+
 Cell_state Mcts_agent::simulate_random_playout(
     const std::shared_ptr<Node>& node, Board board) {
   // Start the simulation with the player at the node's move
   Cell_state current_player = node->player;
-  board.make_move(node->move.first, node->move.second, current_player);\
+  board.make_move(node->move.first, node->move.second, current_player);
   logger->log_simulation_start(node->move, board);
   // Continue simulation until a winner is detected
   while (board.check_winner() == Cell_state::Empty) {
@@ -185,8 +172,7 @@ Cell_state Mcts_agent::simulate_random_playout(
 
 std::vector<Cell_state> Mcts_agent::parallel_playout(
     std::shared_ptr<Node> node, const Board& board,
-    unsigned int number_of_threads) 
-{
+    unsigned int number_of_threads) {
   std::vector<std::thread> threads;
   std::vector<Cell_state> results(number_of_threads);
 
@@ -224,4 +210,26 @@ void Mcts_agent::backpropagate(std::shared_ptr<Node>& node, Cell_state winner) {
     // Move to the parent node for the next iteration
     current_node = current_node->parent_node;
   }
+}
+
+std::shared_ptr<Mcts_agent::Node> Mcts_agent::select_best_child() {
+  double max_win_ratio = -1.;
+  std::shared_ptr<Node> best_child;
+  for (const auto& child : root->child_nodes) {
+    double win_ratio =
+        static_cast<double>(child->win_count) / child->visit_count;
+    // If verbose mode is on, print the win ratio for each child node.
+    logger->log_node_win_ratio(child->move, child->win_count,
+                               child->visit_count);
+    if (win_ratio > max_win_ratio) {
+      max_win_ratio = win_ratio;
+      best_child = child;
+    }
+  }
+  if (!best_child) {
+    throw std::runtime_error(
+        "Statistics are not sufficient to choose a move. You likely gave the "
+        "robot too little time for the given board size.");
+  }
+  return best_child;
 }

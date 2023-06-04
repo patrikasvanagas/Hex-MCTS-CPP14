@@ -15,8 +15,7 @@
  * two players. It handles the game loop, player turns, and game state
  * transitions.
  */
-class Game 
-{
+class Game {
  public:
   /**
    * @brief Constructs a new Game object.
@@ -32,7 +31,7 @@ class Game
   Game(int board_size, std::unique_ptr<Player> player_1,
        std::unique_ptr<Player> player_2);
 
-   /**
+  /**
    * @brief Starts and manages the Hex game.
    *
    * This function contains the main game loop. It continues until a player
@@ -42,11 +41,12 @@ class Game
   void play();
 
  private:
-  Board board;                       ///< The Hex game board.
-  std::unique_ptr<Player> players[2];///< Array of unique pointers to the two players.
-  int current_player_index;         ///< Index of the current player.
+  Board board;  ///< The Hex game board.
+  std::unique_ptr<Player>
+      players[2];            ///< Array of unique pointers to the two players.
+  int current_player_index;  ///< Index of the current player.
 
-   /**
+  /**
    * @brief Switches the current player.
    *
    * This private function switches the turn to the other player. It is called

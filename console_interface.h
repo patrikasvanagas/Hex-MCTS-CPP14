@@ -66,8 +66,7 @@ void run_console_interface();
  * @return True if the value is within bounds, false otherwise.
  */
 template <typename T>
-bool is_in_bounds(T value, T lower_bound, T upper_bound) 
-{
+bool is_in_bounds(T value, T lower_bound, T upper_bound) {
   return value >= lower_bound && value <= upper_bound;
 }
 

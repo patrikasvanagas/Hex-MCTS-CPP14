@@ -15,6 +15,7 @@ class Mcts_agent {
   Mcts_agent(double exploration_factor,
              std::chrono::milliseconds max_decision_time, bool is_parallelized,
              bool is_verbose = false);
+
   std::pair<int, int> choose_move(const Board& board, Cell_state player);
 
  private:
@@ -42,7 +43,13 @@ class Mcts_agent {
     Node(Cell_state player, std::pair<int, int> move,
          std::shared_ptr<Node> parent_node = nullptr);
   };
+
   void expand_node(const std::shared_ptr<Node>& node, const Board& board);
+  void perform_mcts_iterations(
+      const std::chrono::time_point<std::chrono::high_resolution_clock>&
+          end_time,
+      int& mcts_iteration_counter, const Board& board,
+      unsigned int number_of_threads);
   double calculate_uct_score(const std::shared_ptr<Node>& child_node,
                              const std::shared_ptr<Node>& parent_node);
   std::shared_ptr<Node> select_child(const std::shared_ptr<Node>& parent_node);
@@ -52,6 +59,7 @@ class Mcts_agent {
                                            const Board& board,
                                            unsigned int number_of_threads);
   void backpropagate(std::shared_ptr<Node>& node, Cell_state winner);
+  std::shared_ptr<Node> select_best_child();
 };
 
 #endif

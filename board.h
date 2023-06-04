@@ -14,14 +14,19 @@
  * validate moves, and display the current state of the board. The board is
  * represented as a 2D vector of Cell_state enums.
  */
-class Board 
-{
+class Board {
  public:
   /**
    * @brief Constructor for Board class.
    * @param size: Integer to set the size of the board.
    */
   Board(int size);
+
+  /**
+   * @brief Getter for the size of the board.
+   * @return The size of the board.
+   */
+  int get_board_size() const;
 
   /**
    * @brief Displays the current state of the game board.
@@ -52,13 +57,13 @@ class Board
    */
   Cell_state check_winner() const;
 
-    /**
-   * @brief Getter for the size of the board.
-   * @return The size of the board.
+  /**
+   * @brief Gets the valid moves that can be made on the board.
+   * @return A vector of valid moves.
    */
-  int get_board_size() const;
+  std::vector<std::pair<int, int>> get_valid_moves() const;
 
-   /**
+  /**
    * @brief Operator overload for ostream. Used to print the board.
    * @param os: The output stream.
    * @param board: The board to be printed.
@@ -66,46 +71,38 @@ class Board
    */
   friend std::ostream& operator<<(std::ostream& os, const Board& board);
 
-   /**
-   * @brief Gets the valid moves that can be made on the board.
-   * @return A vector of valid moves.
-   */
-  std::vector<std::pair<int, int>> get_valid_moves() const;
-
  private:
   /**
    * @brief The size of the board.
    */
   int board_size;
 
-   /**
+  /**
    * @brief A 2D vector representing the game board. Each Cell_state
    * signifies the state of a cell in the board - it can be either empty,
    * or occupied by one of the two players.
    */
   std::vector<std::vector<Cell_state>> board;
 
-   /**
+  /**
    * @brief An array storing the x offsets for the six possible directions
    * in the Hex game. It is used to find neighbouring cells on the board.
    */
   std::array<int, 6> neighbour_offset_x = {-1, -1, 0, 1, 1, 0};
 
-   /**
+  /**
    * @brief An array storing the y offsets for the six possible directions
    * in the Hex game. It is used to find neighbouring cells on the board.
    */
   std::array<int, 6> neighbour_offset_y = {0, 1, 1, 0, -1, -1};
-  // Private helper functions for Board. More extensive docs in board.cpp.
 
-   /**
+  /**
    * @brief Checks if a given move is within the boundaries of the board.
    * @param move_x: The x-coordinate (row) of the move.
    * @param move_y: The y-coordinate (row) of the move.
    * @return True if the move is within the board, else False.
    */
   bool is_within_bounds(int move_x, int move_y) const;
-  
 
   /**
    * @brief Performs a depth-first search from a start cell to a destination

@@ -18,8 +18,7 @@
  * written into the stream.
  * @return A reference to the output stream with the inserted state character.
  */
-std::ostream& operator<<(std::ostream& os, const Cell_state& state) 
-{
+std::ostream& operator<<(std::ostream& os, const Cell_state& state) {
   switch (state) {
     case Cell_state::Empty:
       os << '.';

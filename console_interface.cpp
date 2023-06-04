@@ -14,8 +14,7 @@
  * @param s The string to check.
  * @return true if the string is an integer, false otherwise.
  */
-bool is_integer(const std::string& s) 
-{
+bool is_integer(const std::string& s) {
   std::string::const_iterator it = s.begin();
   while (it != s.end() && std::isdigit(*it)) ++it;
   return !s.empty() && it == s.end();
@@ -31,8 +30,7 @@ bool is_integer(const std::string& s)
  * @param prompt The string to display to the user.
  * @return Lowercase 'y' or 'n' based on user's response.
  */
-char get_yes_or_no_response(const std::string& prompt) 
-{
+char get_yes_or_no_response(const std::string& prompt) {
   char response;
   while (true) {
     std::cout << prompt;
@@ -54,7 +52,6 @@ char get_yes_or_no_response(const std::string& prompt)
     }
   }
 }
-
 
 /**
  * @brief Template specializations of get_parameter_within_bounds for int and
@@ -128,9 +125,9 @@ double get_parameter_within_bounds<double>(const std::string& prompt,
   return value;
 }
 
-
 /**
- * @brief Creates a Monte Carlo Tree Search (MCTS) player with custom parameters.
+ * @brief Creates a Monte Carlo Tree Search (MCTS) player with custom
+ * parameters.
  *
  * This function prompts the user for various parameters to initialize the MCTS
  * agent, such as maximum decision time, exploration constant, parallelization,
@@ -140,8 +137,7 @@ double get_parameter_within_bounds<double>(const std::string& prompt,
  * @return A unique pointer to the MCTS agent.
  */
 std::unique_ptr<Mcts_player> create_mcts_agent(
-    const std::string& agent_prompt) 
-{
+    const std::string& agent_prompt) {
   std::cout << "\nInitializing " << agent_prompt << ":\n";
 
   int max_decision_time_ms = get_parameter_within_bounds(
@@ -169,17 +165,16 @@ std::unique_ptr<Mcts_player> create_mcts_agent(
       is_parallelized, is_verbose);
 }
 
-
 /**
  * @brief A simple countdown function.
  *
  * This function performs a countdown from the specified number of seconds to 0.
- * It is used before the start of Robot vs Human game when verbose mode is enabled.
+ * It is used before the start of Robot vs Human game when verbose mode is
+ * enabled.
  *
  * @param seconds The number of seconds to count down from.
  */
-void countdown(int seconds) 
-{
+void countdown(int seconds) {
   while (seconds > 0) {
     std::cout << "The agent will start thinking loudly in " << seconds
               << " ...\n";
@@ -194,8 +189,7 @@ void countdown(int seconds)
  * This function prompts the user for the desired player number and board size.
  * It then creates an MCTS agent and a human player, and starts a game.
  */
-void start_match_against_robot() 
-{
+void start_match_against_robot() {
   int human_player_number = get_parameter_within_bounds(
       "Enter '1' if you want to be Player 1 (Blue, Vertical) or '2' if you "
       "want to be "
@@ -225,8 +219,7 @@ void start_match_against_robot()
  * This function prompts the user for the board size, creates two MCTS agents,
  * and starts a game between them.
  */
-void start_robot_arena() 
-{
+void start_robot_arena() {
   int board_size = get_parameter_within_bounds(
       "Enter board size (between 2 and 11): ", 2, 11);
 
@@ -243,8 +236,7 @@ void start_robot_arena()
  * This function prompts the user for the board size, creates two human players,
  * and starts a game between them.
  */
-void start_human_arena() 
-{
+void start_human_arena() {
   int board_size = get_parameter_within_bounds(
       "Enter board size (between 2 and 11): ", 2, 11);
   auto human_player_1 = std::make_unique<Human_player>();
@@ -256,8 +248,7 @@ void start_human_arena()
 /**
  * @brief Prints welcome message in ASCII art.
  */
-void print_welcome_ascii_art() 
-{
+void print_welcome_ascii_art() {
   std::cout << R"(
 
     )            )           *                       (     
@@ -272,7 +263,6 @@ void print_welcome_ascii_art()
 )" << '\n';
 }
 
-
 /**
  * @brief Displays the Board object and the winner
  * from the pieces on the board.
@@ -281,8 +271,7 @@ void print_welcome_ascii_art()
  *
  * @param board The game board to display.
  */
-void print_board_and_winner(Board& board) 
-{
+void print_board_and_winner(Board& board) {
   board.display_board(std::cout);
   Cell_state winner = board.check_winner();
   std::cout << "Winner: " << winner << std::endl;
@@ -291,14 +280,13 @@ void print_board_and_winner(Board& board)
 
 /**
  * @brief Allows to build Hex board configurations
- * to show the winning condition and calls 
+ * to show the winning condition and calls
  * print_board_and_winner to display them.
  *
  * This function is used for demonstration purposes to show a winning condition.
  *
  */
-void display_winning_condition() 
-{
+void display_winning_condition() {
   // Demo case 1: 3x3 board, player Cell_state::Blue wins
   Board board_1(3);
   board_1.make_move(0, 2, Cell_state::Blue);
@@ -328,11 +316,10 @@ void display_winning_condition()
  * programme.
  *
  * Prints out a brief explanation of the Hex game,
- * how it is displayed in the console, and MCTS 
+ * how it is displayed in the console, and MCTS
  * agents.
  */
-void print_docs() 
-{
+void print_docs() {
   std::cout << R"(
 Hex is a two-player, zero-sum, perfect information game invented by the Danish mathematician Piet Hein and independently by the American mathematician John Nash. As it is a deterministic strategy game, chance plays no part in Hex, and unlike in chess or checkers, there are no 'draw' outcomes in Hex - there is always a winner and a loser.
 
@@ -375,8 +362,7 @@ Author: Patrikas Vanagas, 2023
 /**
  * @brief Prints exit message in ASCII art.
  */
-void print_exit_ascii_art() 
-{
+void print_exit_ascii_art() {
   std::cout << R"(
 
     __  ___               __  __            ___    ____   __                     _ __  __                        
@@ -397,8 +383,7 @@ void print_exit_ascii_art()
  * allowing the user to start different types of games or read the game docs.
  * It also handles exceptions and displays appropriate error messages.
  */
-void run_console_interface() 
-{
+void run_console_interface() {
   print_welcome_ascii_art();
   std::cout << "Welcome.\n";
 

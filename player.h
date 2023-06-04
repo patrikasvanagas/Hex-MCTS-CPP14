@@ -10,8 +10,7 @@
  * @brief Player is an abstract base class that represents a generic player.
  * A player can choose a move given the state of a game board.
  */
-class Player 
-{
+class Player {
  public:
   /**
    * @brief Abstract function for choosing a move on the game board.
@@ -27,8 +26,7 @@ class Player
  * @brief Human_player is a concrete class derived from Player that represents a
  * human player.
  */
-class Human_player : public Player 
-{
+class Human_player : public Player {
  public:
   /**
    * @brief Override function for a human player to choose a move on the game
@@ -45,8 +43,7 @@ class Human_player : public Player
  * @brief Mcts_player is a concrete class derived from Player that represents a
  * player using Monte Carlo Tree Search for decision making.
  */
-class Mcts_player : public Player 
-{
+class Mcts_player : public Player {
  public:
   /**
    * @brief Mcts_player constructor.
@@ -69,10 +66,10 @@ class Mcts_player : public Player
   bool get_is_verbose() const;
 
  private:
-  double exploration_factor; // The exploration factor used in MCTS.
-  std::chrono::milliseconds max_decision_time; // Maximum decision-making time.
-  bool is_parallelized; // If true, MCTS computations are parallelized.
-  bool is_verbose; // If true, enables verbose logging to console.
+  double exploration_factor;  // The exploration factor used in MCTS.
+  std::chrono::milliseconds max_decision_time;  // Maximum decision-making time.
+  bool is_parallelized;  // If true, MCTS computations are parallelized.
+  bool is_verbose;       // If true, enables verbose logging to console.
 };
 
 #endif

@@ -15,10 +15,9 @@
  * @return The chosen move as a pair of integers, row first, column second.
  */
 std::pair<int, int> Human_player::choose_move(const Board& board,
-                                              Cell_state player) 
-{
+                                              Cell_state player) {
   int move_row;
-  char move_col_symbol; // column as a letter
+  char move_col_symbol;  // column as a letter
   bool valid_move = false;
 
   while (!valid_move) {
@@ -47,7 +46,7 @@ std::pair<int, int> Human_player::choose_move(const Board& board,
       std::cout << "Invalid column! Try again." << std::endl;
     }
   }
-  return std::make_pair(-1, -1); // should never reach this
+  return std::make_pair(-1, -1);  // should never reach this
 }
 
 /**
@@ -66,9 +65,7 @@ Mcts_player::Mcts_player(double exploration_factor,
     : exploration_factor(exploration_factor),
       max_decision_time(max_decision_time),
       is_parallelized(is_parallelized),
-      is_verbose(is_verbose) 
-{
-}
+      is_verbose(is_verbose) {}
 
 /**
  * @brief Implementation of the choose_move function for the Mcts_player class.
@@ -80,8 +77,7 @@ Mcts_player::Mcts_player(double exploration_factor,
  * @return The chosen move as a pair of integers.
  */
 std::pair<int, int> Mcts_player::choose_move(const Board& board,
-                                             Cell_state player) 
-{
+                                             Cell_state player) {
   Mcts_agent agent(exploration_factor, max_decision_time, is_parallelized,
                    is_verbose);
   return agent.choose_move(board, player);
@@ -92,7 +88,4 @@ std::pair<int, int> Mcts_player::choose_move(const Board& board,
  *
  * @return The value of is_verbose.
  */
-bool Mcts_player::get_is_verbose() const 
-{ 
-    return is_verbose; 
-}
+bool Mcts_player::get_is_verbose() const { return is_verbose; }
