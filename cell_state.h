@@ -19,23 +19,26 @@
  * This enum is vital in operations like board visualization, gameplay mechanics
  * (e.g., claiming cells), and in determining the winner of the game.
  */
-enum class Cell_state 
-{
-	Empty, ///< The cell is not claimed by any player.
-	Blue,  ///< The cell is claimed by the Blue player.
-	Red   ///< The cell is claimed by the Red player.
+enum class Cell_state {
+  Empty,  ///< The cell is not claimed by any player.
+  Blue,   ///< The cell is claimed by the Blue player.
+  Red     ///< The cell is claimed by the Red player.
 };
 
 /**
- * @brief Overload of the stream insertion operator for Cell_state.
+ * @brief Overloaded stream insertion operator for Cell_state.
  *
- * This overload allows instances of Cell_state to be directly inserted into an
- * output stream. It is used for printing the state of a cell in a
- * human-readable format.
+ * This function implements the overloaded stream insertion operator for the
+ * Cell_state enumeration class. It transforms the state of a cell into a single
+ * character that can be directly inserted into an output stream:
+ * - 'Empty' state is translated into '.'
+ * - 'Blue' state is translated into 'B'
+ * - 'Red' state is translated into 'R'
  *
- * @param os The output stream.
- * @param state The state to be inserted into the stream.
- * @return A reference to the output stream.
+ * @param os The output stream where the state will be written.
+ * @param state The Cell_state that needs to be translated into a character and
+ * written into the stream.
+ * @return A reference to the output stream with the inserted state character.
  */
 std::ostream& operator<<(std::ostream& os, const Cell_state& state);
 

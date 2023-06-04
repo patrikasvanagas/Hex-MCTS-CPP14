@@ -15,8 +15,7 @@
  * two players. It handles the game loop, player turns, and game state
  * transitions.
  */
-class Game 
-{
+class Game {
  public:
   /**
    * @brief Constructs a new Game object.
@@ -32,25 +31,33 @@ class Game
   Game(int board_size, std::unique_ptr<Player> player_1,
        std::unique_ptr<Player> player_2);
 
-   /**
+  /**
    * @brief Starts and manages the Hex game.
    *
    * This function contains the main game loop. It continues until a player
    * wins, i.e., when the board's check_winner() function no longer returns
-   * Cell_state::Empty.
+   * Cell_state::Empty. On each iteration of the loop, it:
+   *   - Displays the current player's turn,
+   *   - Displays the current state of the board,
+   *   - Asks the current player to choose a move,
+   *   - Makes the chosen move on the board,
+   *   - Switches to the other player.
+   * Once a player wins, it displays the final state of the board and the
+   * winner.
    */
   void play();
 
  private:
-  Board board;                       ///< The Hex game board.
-  std::unique_ptr<Player> players[2];///< Array of unique pointers to the two players.
-  int current_player_index;         ///< Index of the current player.
+  Board board;  ///< The Hex game board.
+  std::unique_ptr<Player>
+      players[2];            ///< Array of unique pointers to the two players.
+  int current_player_index;  ///< Index of the current player.
 
-   /**
+  /**
    * @brief Switches the current player.
    *
-   * This private function switches the turn to the other player. It is called
-   * after a player has made a move.
+   * This function switches the turn to the other player. It is called after a
+   * player has made a move.
    */
   void switch_player();
 };
