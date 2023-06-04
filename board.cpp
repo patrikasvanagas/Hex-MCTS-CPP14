@@ -49,11 +49,13 @@ Board::Board(int size)
 }
 
 /**
- * @brief Displays the current state of the board on the console.
- * The board is printed in a hexagonal pattern, with each cell represented by
- * its current Cell_state (Empty, Player1, Player2). Each cell is connected to its
- * neighbors with lines (- and \ /). The board is also labeled with numbers for
- * rows and letters for columns for easier identification of cells.
+ * @brief Outputs the current state of the board to an output stream.
+ * The board is displayed in a hexagonal pattern, with each cell represented by
+ * its current Cell_state (Empty, Player1, Player2). Each cell is connected to
+ * its neighbors with lines (- and \ /). The board is also labeled with numbers
+ * for rows and letters for columns for easier identification of cells.
+ * @param os: The output stream to which the board state is to be printed.
+ * Defaults to std::cout if not provided.
  */
 void Board::display_board(std::ostream& os = std::cout) const {
   os << "\n";
@@ -99,9 +101,9 @@ void Board::display_board(std::ostream& os = std::cout) const {
  * @brief Overloads the << operator for the Board class. This function allows
  * the board to be directly printed to an output stream (such as std::cout) by
  * calling the display_board() method of the Board class.
- * @param os: The output stream.
+ * @param os: The output stream to which the board state is to be printed.
  * @param board: The board to be printed.
- * @return The output stream.
+ * @return The output stream with the board state appended.
  */
 std::ostream& operator<<(std::ostream& os, const Board& board) 
 {

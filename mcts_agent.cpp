@@ -54,20 +54,9 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
     logger->log_iteration_number(mcts_iteration_counter + 1);
     std::shared_ptr<Node> chosen_child = select_child(root);
     if (is_parallelized) {
-      // Start the threads and put their separate results into a vector:
-      std::vector<Cell_state> results(number_of_threads);
-      for (unsigned int thread_index = 0; thread_index < number_of_threads;
-           thread_index++) {
-        threads.push_back(std::thread([&, thread_index]() {
-          results[thread_index] = simulate_random_playout(chosen_child, board);
-        }));
-      }
-      // Join the threads:
-      for (auto& thread : threads) {
-        thread.join();
-      }
-      threads.clear();
-      // Backpropagate each of the results:
+      std::vector<Cell_state> results =
+          parallel_playout(chosen_child, board, number_of_threads);
+      // Backpropagate each of the results
       for (Cell_state playout_winner : results) {
         backpropagate(chosen_child, playout_winner);
       }
@@ -76,7 +65,7 @@ std::pair<int, int> Mcts_agent::choose_move(const Board& board,
       Cell_state playout_winner = simulate_random_playout(chosen_child, board);
       backpropagate(chosen_child, playout_winner);
     }
-    // Print interesting statistics:
+    // Print statistics:
     logger->log_root_stats(root->visit_count, root->win_count,
                            root->child_nodes.size());
     for (const auto& child : root->child_nodes) {
@@ -192,6 +181,29 @@ Cell_state Mcts_agent::simulate_random_playout(
     }
   }
   return current_player;
+}
+
+std::vector<Cell_state> Mcts_agent::parallel_playout(
+    std::shared_ptr<Node> node, const Board& board,
+    unsigned int number_of_threads) 
+{
+  std::vector<std::thread> threads;
+  std::vector<Cell_state> results(number_of_threads);
+
+  // Start the threads and put their separate results into a vector
+  for (unsigned int thread_index = 0; thread_index < number_of_threads;
+       thread_index++) {
+    threads.push_back(std::thread([&, thread_index]() {
+      results[thread_index] = simulate_random_playout(node, board);
+    }));
+  }
+
+  // Join the threads
+  for (auto& thread : threads) {
+    thread.join();
+  }
+
+  return results;
 }
 
 void Mcts_agent::backpropagate(std::shared_ptr<Node>& node, Cell_state winner) {

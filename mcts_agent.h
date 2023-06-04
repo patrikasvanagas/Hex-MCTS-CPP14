@@ -48,6 +48,9 @@ class Mcts_agent {
   std::shared_ptr<Node> select_child(const std::shared_ptr<Node>& parent_node);
   Cell_state simulate_random_playout(const std::shared_ptr<Node>& node,
                                      Board board);
+  std::vector<Cell_state> parallel_playout(std::shared_ptr<Node> node,
+                                           const Board& board,
+                                           unsigned int number_of_threads);
   void backpropagate(std::shared_ptr<Node>& node, Cell_state winner);
 };
 

@@ -7,19 +7,21 @@ std::shared_ptr<Logger> Logger::instance(bool is_verbose)
 {
   if (!logger) {
     logger = std::make_shared<Logger>(
-        is_verbose);  // initialize with the verbosity provided
+        is_verbose);
   }
   return logger;
 }
 
-void Logger::log(const std::string& message, bool always_print = false) {
+void Logger::log(const std::string& message, bool always_print = false) 
+{
   if (is_verbose || always_print) {
     std::lock_guard<std::mutex> lock(mutex);
     std::cout << message << std::endl;
   }
 }
 
-void Logger::log_mcts_start(Cell_state player) {
+void Logger::log_mcts_start(Cell_state player) 
+{
   std::ostringstream message;
   if (get_verbosity()) {
     message << "\n-------------MCTS VERBOSE START - " << player
@@ -42,7 +44,7 @@ void Logger::log_iteration_number(int iteration_number)
 void Logger::log_expanded_child(const std::pair<int, int>& move)
 {
   std::ostringstream message;
-  message << "\nEXPANDED CHILD " << move.first << ", " << move.second;
+  message << "EXPANDED CHILD " << move.first << ", " << move.second;
   log(message.str());
 }
 
@@ -50,7 +52,7 @@ void Logger::log_selected_child(const std::pair<int, int>& move,
                                 double uct_score) 
 {
   std::ostringstream message;
-  message << "\nSELECTED CHILD " << move.first << ", " << move.second
+  message << "SELECTED CHILD " << move.first << ", " << move.second
           << " with UCT of ";
   if (uct_score == std::numeric_limits<double>::max()) {
     message << "infinity";
@@ -98,7 +100,7 @@ void Logger::log_simulation_end(Cell_state winning_player, const Board& board)
     board.display_board(board_string);
     message << "DETECTED WIN for player " << winning_player
             << " in Board state:\n"
-            << board_string.str() << "\n";
+            << board_string.str();
     log(message.str());
   }
 }
@@ -144,7 +146,7 @@ void Logger::log_timer_ran_out(int iteration_counter)
 {
   std::ostringstream message;
   message << "\nTIMER RAN OUT. " << iteration_counter
-          << " iterations completed. CHOOSING A MOVE FROM ROOT'S CHILDREN:";
+          << " iterations completed. CHOOSING A MOVE FROM ROOT'S CHILDREN:\n";
   log(message.str());
 }
 
@@ -170,7 +172,7 @@ void Logger::log_best_child_chosen(int iteration_counter,
                                    double win_ratio) 
 {
   std::ostringstream message;
-  message << "\nAfter " << iteration_counter << " iterations, choose child "
+  message << "\nAfter " << iteration_counter << " iterations, chose child "
           << move.first << ", " << move.second << " with win ratio "
           << std::setprecision(4) << win_ratio;
   log(message.str());
