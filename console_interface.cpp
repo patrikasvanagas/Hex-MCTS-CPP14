@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <thread>
+#include <climits>
 
 #include "board.h"
 
