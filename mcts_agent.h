@@ -52,7 +52,7 @@ class Mcts_agent {
       unsigned int number_of_threads);
   double calculate_uct_score(const std::shared_ptr<Node>& child_node,
                              const std::shared_ptr<Node>& parent_node);
-  std::shared_ptr<Node> select_child(const std::shared_ptr<Node>& parent_node);
+  std::shared_ptr<Node> select_child_for_playout(const std::shared_ptr<Node>& parent_node);
   Cell_state simulate_random_playout(const std::shared_ptr<Node>& node,
                                      Board board);
   std::vector<Cell_state> parallel_playout(std::shared_ptr<Node> node,
