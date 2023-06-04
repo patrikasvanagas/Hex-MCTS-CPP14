@@ -14,36 +14,62 @@
  * @brief This class provides the agent for Monte Carlo Tree Search (MCTS).
  * It is used to make strategic decisions in a board game by simulating
  * possible moves and choosing the most promising one.
+ *
  * Node is a nested class that represents a node in the MCTS tree.
+ *
+ * Logger is a member class that is used to log the MCTS process if
+ * is_verbose is set to true.
  */
 class Mcts_agent {
  public:
   /**
    * @brief Constructs a new Mcts_agent.
    *
-   * @param exploration_factor Determines the constant of exploration in the
-   * UCT formula.
+   * @param exploration_factor Determines the constant of exploration in
+   * the UCT formula.
    * @param max_decision_time Maximum time allowed for making a decision
    * in milliseconds.
-   * @param is_parallelized Determines if playouts are performed in
-   * parallel Sufficient time has to be given for this to be effective.
+   * @param is_parallelized Determines if playouts are performed in parallel.
+   * Sufficient time has to be given for this to be effective.
    * @param is_verbose If true, enables detailed logging to the console
    * using the Logger class.
+   *
+   * @throws std::logic_error if is_parallelized and is_verbose are both true.
+   * This is because the output would be garbled.
    */
   Mcts_agent(double exploration_factor,
              std::chrono::milliseconds max_decision_time, bool is_parallelized,
              bool is_verbose = false);
 
   /**
-   * @brief Chooses a move using the MCTS algorithm.
+   * Chooses the best move for a given game state using the Monte Carlo Tree
+   * Search (MCTS) algorithm.
    *
-   * This function chooses a move by performing MCTS iterations until the
-   * maximum decision time is reached. It then selects the most promising
-   * move and returns it.
+   * This function uses the MCTS algorithm to explore the game tree and identify
+   * the best move for the given game state. The algorithm simulates numerous
+   * games starting at the current state, then uses the results of these
+   * simulations to make a decision.
    *
-   * @param board The current game board.
-   * @param player The player for which the move is chosen.
-   * @return The chosen move.
+   * The function creates a new root node for the MCTS, then expands this node
+   * based on the current game state. It then enters a loop in which it selects
+   * a child node, simulates a game from this node, and backpropagates the
+   * result of the game back up the tree. This loop continues until the
+   * allocated decision-making time is exhausted.
+   *
+   * After the loop, the function chooses the child of the root node with the
+   * highest win ratio as the best move. If verbose mode is active, it also
+   * prints various statistics about the MCTS process using Logger.
+   *
+   * Note: The function can work in both a single-threaded and a multi-threaded
+   * mode. The latter is activated by setting `is_parallelized` to `true`.
+   *
+   * @param board The current game state.
+   * @param player The player for whom the move is being chosen.
+   * @return A std::pair<int, int> representing the best move for the given
+   * player in the current game state.
+   * @throws runtime_error If the statistics are not sufficient to choose a
+   * move. This can happen if the robot was given too little time for the given
+   * board size.
    */
   std::pair<int, int> choose_move(const Board& board, Cell_state player);
 
@@ -136,32 +162,43 @@ class Mcts_agent {
          std::shared_ptr<Node> parent_node = nullptr);
   };
 
-  // Private helper functions for MCTS. More extensive docs are in
-  // mcts_agent.cpp.
-
   /**
-   * @brief Expands a node in the game tree.
+   * @brief Expands a given node by generating all its possible child nodes
+   * based on the valid moves on the current game board.
    *
-   * This function generates all possible child nodes for a given node.
+   * This function populates the `child_nodes` member of the input `Node` with
+   * new nodes, each representing a valid move for the player at the current
+   * game state. Each child node is linked back to the input node as its parent.
    *
-   * @param node The node to be expanded.
+   * If verbose mode is enabled, the function will also print information about
+   * each new child node it creates.
+   *
+   * @param node A shared_ptr to the Node to be expanded.
    * @param board The current game state.
    */
   void expand_node(const std::shared_ptr<Node>& node, const Board& board);
 
   /**
-   * @brief Executes Monte Carlo Tree Search (MCTS) iterations until a set end
-   * time.
+   * @brief Performs the main loop of the Monte Carlo Tree Search (MCTS)
+   * algorithm.
    *
-   * This function performs selection, simulation, backpropagation and logging
-   * in each MCTS iteration. It supports both serial and parallel playouts.
+   * This function performs multiple iterations of the MCTS algorithm until a
+   * provided end time is reached. In each iteration, a child node is selected
+   * from the root node using the UCT score, and a playout is simulated from
+   * this node, either in parallel or serially depending on the value of
+   * `is_parallelized`. The results of the playout are then backpropagated up
+   * the MCTS tree. The function also logs various statistics of the root node
+   * and its children after each iteration using the Logger class.
    *
-   * @param end_time Time point to stop performing iterations.
-   * @param mcts_iteration_counter Counter to keep track of the number of MCTS
-   * iterations.
-   * @param board Current state of the game board.
-   * @param number_of_threads Number of threads for parallel playouts (only
-   * applicable if is_parallelized is true).
+   * @param end_time The end time for the MCTS iterations. The function will
+   * continue performing iterations until the current time is greater than this
+   * value.
+   * @param mcts_iteration_counter A reference to an integer counter for the
+   * number of MCTS iterations performed so far. This counter is incremented
+   * after each iteration.
+   * @param board The current state of the game board.
+   * @param number_of_threads The number of threads to use for parallel
+   * playouts. This parameter is only relevant if `is_parallelized` is true.
    */
   void perform_mcts_iterations(
       const std::chrono::time_point<std::chrono::high_resolution_clock>&
@@ -170,89 +207,118 @@ class Mcts_agent {
       unsigned int number_of_threads);
 
   /**
-   * @brief Selects a child node of a given parent node for the playout phase.
+   * @brief Selects the best child of a given parent node based on the Upper
+   * Confidence Bound for Trees (UCT) score.
    *
-   * This method chooses a child node based on the Upper Confidence Bound for
-   * Trees (UCT) score, which balances exploration and exploitation.
+   * This function iterates through all the child nodes of the given parent
+   * node, and for each child, calculates its UCT score using the
+   * calculate_uct_score() method. The child with the highest UCT score is
+   * selected as the best child. If verbose mode is enabled, the function prints
+   * the move coordinates and the UCT score of the selected child.
    *
-   * @param parent_node The parent Node from which a child node is selected.
-   * @return A pointer to the selected child Node.
+   * @param parent_node A shared_ptr to the parent Node whose child nodes are to
+   * be evaluated.
+   * @return A shared_ptr to the Node that is selected as the best child.
    */
   std::shared_ptr<Node> select_child_for_playout(
       const std::shared_ptr<Node>& parent_node);
 
   /**
-   * @brief Calculates the Upper Confidence Bound for Trees (UCT) score of a
-   * child node.
+   * @brief Calculates the Upper Confidence Bound for Trees (UCT) score for a
+   * given node.
    *
-   * This function determines the UCT score, which guides the selection of child
-   * nodes during the Monte Carlo Tree Search (MCTS) algorithm. The UCT score
-   * balances the trade-off between exploration and exploitation.
+   * The UCT score is used in the selection phase of the Monte Carlo Tree Search
+   * (MCTS) algorithm to balance the exploration and exploitation trade-off. The
+   * function uses the UCT formula, which is a sum of the exploitation term (win
+   * ratio) and the exploration term. The exploration term is proportional to
+   * the square root of the logarithm of the parent node's visit count divided
+   * by the child node's visit count.
    *
-   * @param child_node The child Node for which the UCT score is calculated.
-   * @param parent_node The parent Node of the child node.
-   * @return The UCT score for the child node.
+   * The function returns a high value if the child node has not been visited
+   * yet, to encourage the exploration of unvisited nodes.
+   *
+   * @param child_node A shared_ptr to the child Node for which the UCT score is
+   * being calculated.
+   * @param parent_node A shared_ptr to the parent Node of the child node.
+   * @return The calculated UCT score.
    */
   double calculate_uct_score(const std::shared_ptr<Node>& child_node,
                              const std::shared_ptr<Node>& parent_node);
 
   /**
-   * @brief Simulates a random game playout from a given node.
+   * @brief Simulates a random playout from a given node on a given board.
    *
-   * This function conducts a random game playout from a specified node,
-   * alternating between players and selecting random valid moves until a
-   * game-ending condition is met.
+   * This function takes as input a node and a board state, and simulates a
+   * random playout starting from the node's move. The simulation proceeds by
+   * alternating between players, choosing a random valid move for each player,
+   * until the game ends (i.e., when a player wins). If verbose mode is enabled,
+   * the function also prints information about the simulation, including the
+   * move made at each step and the state of the board and its state using
+   * Logger.
    *
-   * @param node The Node from which the playout starts.
-   * @param board The game Board state where the playout is performed. The
-   * function uses a copy of the board, hence the original state is not altered.
-   * @return The Cell_state of the winning player following the simulation.
+   * @param node A shared_ptr to the Node from which the simulation starts.
+   * @param board The Board on which the simulation is conducted. The board
+   * state is copied, so the original board is not modified.
+   * @return The Cell_state of the winning player.
    */
   Cell_state simulate_random_playout(const std::shared_ptr<Node>& node,
                                      Board board);
 
   /**
-   * @brief Conducts multiple game playouts in parallel from a given node.
+   * @brief Performs a number of game playouts in parallel from a given node and
+   * returns their results.
    *
-   * This function performs a specified number of game playouts from the input
-   * node concurrently. Each playout is performed on a separate thread, and the
-   * results are collected in a vector.
+   * This function simulates several game playouts starting from a given node in
+   * parallel using multiple threads. It returns the outcome of each playout in
+   * a vector, with the result of the playout simulated by the i-th thread
+   * stored in the i-th position of the vector.
    *
-   * @param node The Node from which the playouts originate.
+   * @param node The node from which the playouts should be simulated.
    * @param board The current state of the game board.
-   * @param number_of_threads The number of threads used for parallel playouts.
-   * @return A vector containing the Cell_state of the winning player for each
-   * playout.
+   * @param number_of_threads The number of threads to use for the parallel
+   * playouts.
+   * @return A vector of Cell_state, where each element is the the playout
+   * winner.
    */
   std::vector<Cell_state> parallel_playout(std::shared_ptr<Node> node,
                                            const Board& board,
                                            unsigned int number_of_threads);
 
   /**
-   * @brief Propagates the result of a simulation up the game tree.
+   * @brief Backpropagates the result of a simulation through the tree.
    *
-   * This function updates the nodes of the game tree following a simulation,
-   * incrementing visit and win counts as appropriate. The updates begin at the
-   * input node and proceed upward to the root of the tree, utilizing a lock to
-   * ensure thread safety during modifications.
+   * This function takes a node and the winner of a game simulation, and
+   * backpropagates the result through the tree. It starts at the given node and
+   * moves up towards the root, incrementing the visit count of each node along
+   * the way. If the winner is the same as the player at a node, it also
+   * increments the win count of that node. The process continues until the root
+   * is reached. The function is designed to be thread-safe by locking the
+   * node's mutex before updating its data.
    *
-   * @param node The Node from which backpropagation begins.
-   * @param winner The Cell_state of the simulation's winning player.
+   * @note In the current implementation, the function only traverses two levels
+   * of the tree (from a child node to its root), but it can be used to
+   * traverse the entire tree if needed.
+   *
+   * @param node A shared_ptr to the Node at which to start the backpropagation.
+   * @param winner The Cell_state of the winning player in the game simulation.
    */
   void backpropagate(std::shared_ptr<Node>& node, Cell_state winner);
 
   /**
-   * @brief Determines the best child of the root node by evaluating win ratios.
+   * @brief Selects the best child of the root node based on the highest win
+   * ratio.
    *
-   * This function iterates over the child nodes of the root, computes the win
-   * ratio for each child (the child's win count divided by its visit count),
-   * and returns the child with the maximum win ratio. In verbose mode, the win
-   * ratio of each child node is logged. If the statistics are inadequate for
-   * selecting a child node, the function raises a runtime error.
+   * This function iterates over the root's child nodes, calculates the win
+   * ratio for each child node (i.e., the child node's win count divided by its
+   * visit count), and returns the child node with the highest win ratio. If
+   * verbose mode is enabled, it logs the win ratio for each child node. If no
+   * child node can be selected due to insufficient statistics (which might
+   * occur if the agent was given too little decision time for the board size),
+   * it throws a runtime error.
    *
-   * @return A shared_ptr to the Node that has the maximum win ratio.
-   * @throws std::runtime_error If the child selection cannot be performed due
-   * to inadequate statistics.
+   * @return A shared pointer to the child node with the highest win ratio.
+   * @throws std::runtime_error If no child can be selected due to insufficient
+   * statistics.
    */
   std::shared_ptr<Node> select_best_child();
 };
