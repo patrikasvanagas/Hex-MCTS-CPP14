@@ -181,15 +181,79 @@ class Mcts_agent {
   std::shared_ptr<Node> select_child_for_playout(
       const std::shared_ptr<Node>& parent_node);
 
+  /**
+   * @brief Calculates the Upper Confidence Bound for Trees (UCT) score of a
+   * child node.
+   *
+   * This function determines the UCT score, which guides the selection of child
+   * nodes during the Monte Carlo Tree Search (MCTS) algorithm. The UCT score
+   * balances the trade-off between exploration and exploitation.
+   *
+   * @param child_node The child Node for which the UCT score is calculated.
+   * @param parent_node The parent Node of the child node.
+   * @return The UCT score for the child node.
+   */
   double calculate_uct_score(const std::shared_ptr<Node>& child_node,
                              const std::shared_ptr<Node>& parent_node);
 
+  /**
+   * @brief Simulates a random game playout from a given node.
+   *
+   * This function conducts a random game playout from a specified node,
+   * alternating between players and selecting random valid moves until a
+   * game-ending condition is met.
+   *
+   * @param node The Node from which the playout starts.
+   * @param board The game Board state where the playout is performed. The
+   * function uses a copy of the board, hence the original state is not altered.
+   * @return The Cell_state of the winning player following the simulation.
+   */
   Cell_state simulate_random_playout(const std::shared_ptr<Node>& node,
                                      Board board);
+
+  /**
+   * @brief Conducts multiple game playouts in parallel from a given node.
+   *
+   * This function performs a specified number of game playouts from the input
+   * node concurrently. Each playout is performed on a separate thread, and the
+   * results are collected in a vector.
+   *
+   * @param node The Node from which the playouts originate.
+   * @param board The current state of the game board.
+   * @param number_of_threads The number of threads used for parallel playouts.
+   * @return A vector containing the Cell_state of the winning player for each
+   * playout.
+   */
   std::vector<Cell_state> parallel_playout(std::shared_ptr<Node> node,
                                            const Board& board,
                                            unsigned int number_of_threads);
+
+  /**
+   * @brief Propagates the result of a simulation up the game tree.
+   *
+   * This function updates the nodes of the game tree following a simulation,
+   * incrementing visit and win counts as appropriate. The updates begin at the
+   * input node and proceed upward to the root of the tree, utilizing a lock to
+   * ensure thread safety during modifications.
+   *
+   * @param node The Node from which backpropagation begins.
+   * @param winner The Cell_state of the simulation's winning player.
+   */
   void backpropagate(std::shared_ptr<Node>& node, Cell_state winner);
+
+  /**
+   * @brief Determines the best child of the root node by evaluating win ratios.
+   *
+   * This function iterates over the child nodes of the root, computes the win
+   * ratio for each child (the child's win count divided by its visit count),
+   * and returns the child with the maximum win ratio. In verbose mode, the win
+   * ratio of each child node is logged. If the statistics are inadequate for
+   * selecting a child node, the function raises a runtime error.
+   *
+   * @return A shared_ptr to the Node that has the maximum win ratio.
+   * @throws std::runtime_error If the child selection cannot be performed due
+   * to inadequate statistics.
+   */
   std::shared_ptr<Node> select_best_child();
 };
 
