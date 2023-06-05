@@ -1,4 +1,14 @@
-# Console Hex interface with MCTS and Leaf Parallelization
+# Monte Carlo Tree Search with Leaf Parallelization for the Hex Board Game in C++ 14
 
 ## Overview
-This repository contains an implementation of a [Monte Carlo Tree Search](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search) (MCTS) agent with optional [leaf parallelization](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#:~:text=Leaf%20parallelization) for the board game of [Hex](https://en.wikipedia.org/wiki/Hex_(board_game)) with a variable board size in a console interface with customizable MCTS hyperparameters using standard C++ 14 libraries. It supports the user playing against an MCTS agent, pitting 2 MCTS agents, or a mode where the user is responsible for the moves of both players. If the agent is used in single-threaded mode, it can output a detailed log of how a move is picked using each MCTS iteration.
+This repository contains an implementation of the board game of [Hex](https://en.wikipedia.org/wiki/Hex_(board_game)) with an agent based on [Monte Carlo Tree Search](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search) (MCTS) utilizing optional [leaf parallelization](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#:~:text=Leaf%20parallelization) using standard C++14 libraries in a console interface. The MCTS agent has configurable hyperparameters, and the size of the board can be adjusted.
+
+## Features
+
+The application includes several modes of gameplay:
+
+- *Human vs Robot:* A user competes against the AI.
+- *Robot vs Robot:* Two AI agents compete, allowing for evaluation and comparison of different hyperparameters.
+- *Human vs Human:* Two users compete, each taking turns on the same console.
+
+A feature of particular interest to those studying MCTS is the optional logging functionality. When the agent is run in single-threaded mode, it is capable of producing a detailed log, showing the decision-making process behind each move across MCTS iterations.
