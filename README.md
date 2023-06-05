@@ -13,4 +13,4 @@ The application includes several modes of gameplay:
 - **Human vs Human:** Two users compete, each taking turns on the same console.
 
 A feature of particular interest to those studying MCTS is the optional logging functionality. When the agent is run in single-threaded mode, it is capable of producing a detailed log, showing the decision-making process behind each move across MCTS iterations.
-![img2](./images/2.jpg)
+![img2](./images/2.png)
