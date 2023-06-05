@@ -1,4 +1,4 @@
-# Monte Carlo Tree Search with Leaf Parallelization for the Hex Board Game in C++ 14
+# Hex Board Game with Monte Carlo Tree Search Agent in C++14
 
 ## Overview
 This repository contains an implementation of the board game of [Hex](https://en.wikipedia.org/wiki/Hex_(board_game)) with an agent based on [Monte Carlo Tree Search](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search) (MCTS) utilizing optional [leaf parallelization](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#:~:text=Leaf%20parallelization) using standard C++14 libraries in a console interface. The MCTS agent has configurable hyperparameters, and the size of the board can be adjusted.
