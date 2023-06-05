@@ -56,7 +56,7 @@ void Board::make_move(int move_x, int move_y, Cell_state player) {
 bool Board::are_cells_connected(int first_cell_x, int first_cell_y,
                                 int second_cell_x, int second_cell_y) const {
   // Iterate over all possible neighboring cells of the first cell
-  for (int i = 0; i < neighbour_offset_x.size(); ++i) {
+  for (std::size_t i = 0; i < neighbour_offset_x.size(); ++i) {
     int neighbour_cell_x = first_cell_x + neighbour_offset_x[i];
     int neighbour_cell_y = first_cell_y + neighbour_offset_y[i];
     if (is_within_bounds(neighbour_cell_x, neighbour_cell_y) &&
@@ -80,7 +80,7 @@ bool Board::depth_first_search(
   game_board_snapshot[start_x][start_y] = Cell_state::Empty;
 
   // For each neighboring cell...
-  for (int i = 0; i < neighbour_offset_x.size(); ++i) {
+  for (std::size_t i = 0; i < neighbour_offset_x.size(); ++i) {
     int new_x = start_x + neighbour_offset_x[i];
     int new_y = start_y + neighbour_offset_y[i];
 
@@ -150,15 +150,15 @@ void Board::display_board(std::ostream& os = std::cout) const {
   os << "\n";
 
   // Loop through each cell in the board.
-  for (size_t row = 0; row < board_size; ++row) {
+  for (size_t row = 0; row < static_cast<std::size_t>(board_size); ++row) {
     // Indentation for the hexagonal pattern.
     os << std::string(2 * row, ' ');
-    for (size_t col = 0; col < board_size; ++col) {
+    for (size_t col = 0; col < static_cast<std::size_t>(board_size); ++col) {
       // Print the state of the cell.
       os << board[row][col];
       // Print a line (-) between cells in the same row, except for the last
       // cell.
-      if (col < board_size - 1) {
+      if (col < static_cast<std::size_t>(board_size) - 1) {
         os << " - ";
       }
     }
@@ -168,10 +168,11 @@ void Board::display_board(std::ostream& os = std::cout) const {
 
     // Print lines (\ /) between cells in adjacent rows, except for the last
     // row.
-    if (row < board_size - 1) {
+    if (row < static_cast<std::size_t>(board_size) - 1) {
       // Print the bottom coordinate labels (letters).
       os << std::string(2 * row + 1, ' ');
-      for (size_t col = 0; col < board_size - 1; ++col) {
+      for (size_t col = 0; col < static_cast<std::size_t>(board_size) - 1;
+           ++col) {
         os << "\\ / ";
       }
       os << "\\";
@@ -180,7 +181,7 @@ void Board::display_board(std::ostream& os = std::cout) const {
   }
   // print the bottom coordinate labels
   os << std::string(2 * (board_size - 1) - 1, ' ');
-  for (size_t col = 0; col < board_size; ++col) {
+  for (size_t col = 0; col < static_cast<std::size_t>(board_size); ++col) {
     os << "  " << static_cast<char>('a' + col) << " ";
   }
   os << "\n\n";

@@ -102,12 +102,12 @@ class Mcts_agent {
   bool is_parallelized = false;
   bool is_verbose = false;
 
+  // For logging
+  std::shared_ptr<Logger> logger;
+
   // For random number generation
   std::random_device random_device;
   std::mt19937 random_generator;
-
-  // For logging
-  std::shared_ptr<Logger> logger;
 
   // The root node of the game tree
   struct Node;
