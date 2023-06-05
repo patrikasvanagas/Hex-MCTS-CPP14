@@ -7,8 +7,8 @@ This repository contains an implementation of the board game of [Hex](https://en
 
 The application includes several modes of gameplay:
 
-- *Human vs Robot:* A user competes against the AI.
-- *Robot vs Robot:* Two AI agents compete, allowing for evaluation and comparison of different hyperparameters.
-- *Human vs Human:* Two users compete, each taking turns on the same console.
+- **Human vs Robot:** A user competes against the AI.
+- **Robot vs Robot:** Two AI agents compete, allowing for evaluation and comparison of different hyperparameters.
+- **Human vs Human:** Two users compete, each taking turns on the same console.
 
 A feature of particular interest to those studying MCTS is the optional logging functionality. When the agent is run in single-threaded mode, it is capable of producing a detailed log, showing the decision-making process behind each move across MCTS iterations.
