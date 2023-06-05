@@ -21,7 +21,7 @@ A feature of particular interest to those studying MCTS is the optional logging 
 
 - `cell_state`: an enumeration type to represent the state of a cell on a Hex game board, which could either be empty or claimed by a player (Blue or Red).
 - `board`: represents the Hex game board, providing functionality for its initialization, move validation, game state representation, determining the game outcome using recursive [depth-first search](https://en.wikipedia.org/wiki/Depth-first_search), and visualization.
-- `mcts_agent`: 
+- `mcts_agent`: an implementation of the MCTS algorithm that simulates game play to select the most promising move, supporting optional parallelization for improved performance and detailed logging. A `Node` of the game tree is a nested class.
 - `logger`: 
 - `player`: 
 - `game`:
