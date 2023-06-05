@@ -19,10 +19,10 @@ A feature of particular interest to those studying MCTS is the optional logging 
 
 ## Structure
 
-- `cell_state`: an enumeration type to represent the state of a cell on a Hex game board, which could either be empty or claimed by a player (Blue or Red).
-- `board`: represents the Hex game board, providing functionality for its initialization, move validation, game state representation, determining the game outcome using recursive [depth-first search](https://en.wikipedia.org/wiki/Depth-first_search), and visualization.
-- `mcts_agent`: an implementation of the MCTS algorithm that simulates game play to select the most promising move, supporting optional parallelization for improved performance and detailed logging. A `Node` of the game tree is a nested class.
-- `logger`: 
+- `Cell_state`: an enum to represent the state of a cell on a Hex game board, which could either be empty or claimed by a player (Blue or Red).
+- `Board`: represents the Hex game board, providing functionality for its initialization, move validation, game state representation, determining the game outcome using recursive [depth-first search](https://en.wikipedia.org/wiki/Depth-first_search), and visualization.
+- `Mcts_agent`: an implementation of the MCTS algorithm that simulates game play to select the most promising move, supporting optional thread-safe parallelization for improved performance and detailed logging. A `Node` of the game tree is a nested class.
+- `Logger`: a thread-safe, singleton utility used for logging operations and state changes in the Monte Carlo Tree Search (MCTS) algorithm. It is a member class of `Mcts_agent`.
 - `player`: 
 - `game`:
 - `console_interface`:
