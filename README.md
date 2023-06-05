@@ -19,4 +19,20 @@ A feature of particular interest to those studying MCTS is the optional logging 
 
 ## Structure
 
-- `cell_state`: an enumeration type to represent the state of a cell on a Hex game board, which could either be empty or claimed by a player (Blue or Red), and also includes an overloaded stream insertion operator to facilitate board visualization.
+- `cell_state`: an enumeration type to represent the state of a cell on a Hex game board, which could either be empty or claimed by a player (Blue or Red).
+- 
+- `board`: represents the Hex game board, providing functionality for its initialization, move validation, game state representation, determining the game outcome using recursive [depth-first search](https://en.wikipedia.org/wiki/Depth-first_search), and visualization.
+
+- `mcts_agent`: 
+
+- `logger`: 
+
+- `player`: 
+
+- `game`:
+
+- `console_interface`:
+
+- `main`:
+
+For more detailed documentation, refer to the corresponding header files.
