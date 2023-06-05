@@ -28,3 +28,6 @@ A feature of particular interest to those studying MCTS is the optional logging 
 - `main`: calls the `run_console_interface` function.
 
 For more detailed docs, refer to the corresponding header files.
+
+## Usage
+The simplest way to build the program may be to use Visual Studio with C++ Desktop Development. Having installed it, click the green code button at the top of the page, and choose 'Open with Visual Studio'. Then, build the project having selected the 'CMakeLists.txt' file. Additionally, 'Makefile' is provided.
